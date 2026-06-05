@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { 
   Sun, Moon, Settings, Sliders, Copy, Save, FileText, Sparkles, 
   Trash2, RotateCcw, Download
@@ -42,7 +42,7 @@ function App() {
     if (raw) {
       try {
         return JSON.parse(raw);
-      } catch (e) {
+      } catch {
         return [];
       }
     }
@@ -56,9 +56,6 @@ function App() {
   const [showTemplateEditor, setShowTemplateEditor] = useState<boolean>(false);
   const [editingTemplateMode, setEditingTemplateMode] = useState<'poster' | 'carousel'>('poster');
   const [tempTemplateText, setTempTemplateText] = useState<string>('');
-
-  // Live Compiled Prompt state
-  const [compiledPrompt, setCompiledPrompt] = useState<string>('');
 
   // Sync dark class on document element
   useEffect(() => {
@@ -139,9 +136,8 @@ function App() {
     showToast(`Applied ${presetType.toUpperCase()} Campaign Preset!`);
   };
 
-  // Compiles prompt string based on state variables
-  useEffect(() => {
-    let outputText = "";
+  // Compiles prompt string based on state variables using useMemo (Cleaner, linter-friendly)
+  const compiledPrompt = useMemo(() => {
     if (engineMode === 'poster') {
       if (promptTab === 'master') {
         let compiled = customPosterTemplate;
@@ -155,9 +151,9 @@ function App() {
         compiled = compiled.split('{{selected_hero_configuration}}').join(formInputs.heroConfig);
         compiled = compiled.split('{{team_mood_direction}}').join(formInputs.teamMoodDir);
         compiled = compiled.split('{{background_mood}}').join(formInputs.bgMood);
-        outputText = compiled;
+        return compiled;
       } else {
-        outputText = `Premium social media poster photo background for Arus.id fintech campaign.
+        return `Premium social media poster photo background for Arus.id fintech campaign.
 Visual Human Moment: ${formInputs.heroConfig}, set in an emotional environment of [EMOTION: ${formInputs.emotion.toUpperCase()}].
 Team Dynamic Context: ${formInputs.teamMoodDir}
 Background Atmosphere: ${formInputs.bgMood}
@@ -183,9 +179,9 @@ Brand Color Accent: Muted neutrals and dark green tone background (#1b4c4a) with
         compiled = compiled.split('{{SLIDE4_SUPPORT}}').join(`"${formInputs.carouselSlides[3]?.support || ''}"`);
         compiled = compiled.split('{{SLIDE5_HEADLINE}}').join(`"${formInputs.carouselSlides[4]?.headline || ''}"`);
         compiled = compiled.split('{{SLIDE5_SUPPORT}}').join(`"${formInputs.carouselSlides[4]?.support || ''}"`);
-        outputText = compiled;
+        return compiled;
       } else {
-        outputText = `Premium 5-slide visual carousel asset background sequence for Arus.id campaign.
+        return `Premium 5-slide visual carousel asset background sequence for Arus.id campaign.
 Story Theme: Reverse financial breakthrough narrative of 1 urban Indonesian modern worker.
 Visual Arc (Slide 1-5):
 - Slide 1 (Aspirational): Crisp clear sunlight, hero standing in lobby.
@@ -196,23 +192,20 @@ Visual Arc (Slide 1-5):
 Technical constraints: Cinematic portrait frame, 3:4 aspect ratio, ultra-premium glassmorphism UI overlay components in focus.`;
       }
     }
-    setCompiledPrompt(outputText);
-  }, [formInputs, designSettings, engineMode, promptTab, customPosterTemplate, customCarouselTemplate]);
+  }, [formInputs, engineMode, promptTab, customPosterTemplate, customCarouselTemplate]);
 
-  // Lock team mood selector if configuration A is selected
-  useEffect(() => {
-    if (formInputs.heroConfig.includes("CONFIGURATION A")) {
-      setFormInputs(prev => ({
-        ...prev,
-        teamMoodDir: "NOT APPLICABLE: - (Only use this if Configuration A is selected)"
-      }));
-    } else if (formInputs.teamMoodDir.includes("NOT APPLICABLE")) {
-      setFormInputs(prev => ({
-        ...prev,
-        teamMoodDir: "STRESS & ANXIETY CONTEXT: A modern tech-office room where 3-4 team members look visibly quiet, mentally overloaded, and distracted; one is rubbing their temples, another staring blankly at a laptop screen, capturing a unified atmosphere of subtle workplace pressure."
-      }));
-    }
-  }, [formInputs.heroConfig]);
+  // Helper function to update configuration and sync team mood locking contextually
+  const handleHeroConfigChange = (newConfig: string) => {
+    setFormInputs(prev => {
+      const updated = { ...prev, heroConfig: newConfig };
+      if (newConfig.includes("CONFIGURATION A")) {
+        updated.teamMoodDir = "NOT APPLICABLE: - (Only use this if Configuration A is selected)";
+      } else if (prev.teamMoodDir.includes("NOT APPLICABLE")) {
+        updated.teamMoodDir = "STRESS & ANXIETY CONTEXT: A modern tech-office room where 3-4 team members look visibly quiet, mentally overloaded, and distracted; one is rubbing their temples, another staring blankly at a laptop screen, capturing a unified atmosphere of subtle workplace pressure.";
+      }
+      return updated;
+    });
+  };
 
   // Synchronize first slide text editor and global carousel variables
   const handleGlobalCarouselTextChange = (field: 'headline' | 'support' | 'cta' | 'highlight', value: string) => {
@@ -259,7 +252,7 @@ Technical constraints: Cinematic portrait frame, 3:4 aspect ratio, ultra-premium
       } else {
         fallbackCopyText(compiledPrompt);
       }
-    } catch (err) {
+    } catch {
       fallbackCopyText(compiledPrompt);
     }
   };
@@ -279,7 +272,7 @@ Technical constraints: Cinematic portrait frame, 3:4 aspect ratio, ultra-premium
       } else {
         showToast("Copy failed, please copy manually.");
       }
-    } catch (e) {
+    } catch {
       showToast("Copy failed, please copy manually.");
     }
     document.body.removeChild(textArea);
@@ -317,7 +310,7 @@ Technical constraints: Cinematic portrait frame, 3:4 aspect ratio, ultra-premium
       } else {
         fallbackCopyText(text);
       }
-    } catch (e) {
+    } catch {
       fallbackCopyText(text);
     }
   };
@@ -594,7 +587,7 @@ Technical constraints: Cinematic portrait frame, 3:4 aspect ratio, ultra-premium
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-primary to-brand-dark flex items-center justify-center shadow-lg">
-              <svg className="w-6 h-6 text-brand-obsidian" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <svg className="w-6 h-6 text-brand-obsidian" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                 <path d="M2 17l6-6 4 4 10-10" strokeLinecap="round" strokeLinejoin="round"/>
                 <path d="M17 5h5v5" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
@@ -787,7 +780,7 @@ Technical constraints: Cinematic portrait frame, 3:4 aspect ratio, ultra-premium
                         <label className="block text-[10px] font-bold text-brand-primary uppercase mb-1">Selected Hero Configuration</label>
                         <select 
                           value={formInputs.heroConfig} 
-                          onChange={(e) => setFormInputs(prev => ({ ...prev, heroConfig: e.target.value }))}
+                          onChange={(e) => handleHeroConfigChange(e.target.value)}
                           className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-2.5 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-brand-primary transition"
                         >
                           <option value="CONFIGURATION A: INDIVIDUAL HERO (1 Person)">CONFIGURATION A: INDIVIDUAL HERO (1 Person)</option>
@@ -961,7 +954,7 @@ Technical constraints: Cinematic portrait frame, 3:4 aspect ratio, ultra-premium
                     <label className="block text-xs font-bold text-slate-500 dark:text-gray-400 mb-1">HERO SCENARIO MODE</label>
                     <select 
                       value={formInputs.heroMode} 
-                      onChange={(e) => setFormInputs(prev => ({ ...prev, heroMode: e.target.value as any }))}
+                      onChange={(e) => setFormInputs(prev => ({ ...prev, heroMode: e.target.value as FormInputs['heroMode'] }))}
                       className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-2.5 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary transition"
                     >
                       <option value="SMARTPHONE">Smartphone (Fintech Alert / App UI)</option>
@@ -1026,11 +1019,11 @@ Technical constraints: Cinematic portrait frame, 3:4 aspect ratio, ultra-premium
                   </div>
                 </div>
 
-                {/* ENLARGED INTERACTIVE TERMINAL FIELD (380px High) */}
+                {/* INTERACTIVE TERMINAL FIELD (380px High) */}
                 <div className="relative mb-4">
                   <textarea 
                     value={compiledPrompt} 
-                    onChange={(e) => setCompiledPrompt(e.target.value)}
+                    readOnly
                     className="w-full h-[380px] bg-brand-obsidian/90 border border-brand-primary/20 rounded-2xl p-4 font-mono text-[11px] leading-relaxed text-slate-300 dark:text-brand-primary/90 focus:outline-none focus:border-brand-primary/60 resize-none overflow-y-auto"
                   />
                   <div className="absolute bottom-3 right-3 flex items-center gap-2">
@@ -1201,7 +1194,7 @@ Technical constraints: Cinematic portrait frame, 3:4 aspect ratio, ultra-premium
                     {['left', 'center', 'right'].map((align) => (
                       <button 
                         key={align}
-                        onClick={() => setDesignSettings(prev => ({ ...prev, logoAlign: align as any }))}
+                        onClick={() => setDesignSettings(prev => ({ ...prev, logoAlign: align as DesignSettings['logoAlign'] }))}
                         className={`px-3 py-1.5 rounded-lg border text-xs font-semibold capitalize transition ${
                           designSettings.logoAlign === align
                             ? 'border-brand-primary bg-brand-primary/10 text-brand-primary'
@@ -1218,7 +1211,7 @@ Technical constraints: Cinematic portrait frame, 3:4 aspect ratio, ultra-premium
                   <label className="block text-xs font-bold text-slate-500 dark:text-gray-400 mb-1">MOCKUP PHOTO DIRECTION</label>
                   <select 
                     value={designSettings.mockupPhoto} 
-                    onChange={(e) => setDesignSettings(prev => ({ ...prev, mockupPhoto: e.target.value as any }))}
+                    onChange={(e) => setDesignSettings(prev => ({ ...prev, mockupPhoto: e.target.value as DesignSettings['mockupPhoto'] }))}
                     className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-2.5 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary transition"
                   >
                     <option value="corporate-stress">Moody Corporate Distraction (Dark)</option>
@@ -1272,7 +1265,7 @@ Technical constraints: Cinematic portrait frame, 3:4 aspect ratio, ultra-premium
               <div className="absolute top-4 left-4 z-20 flex items-center gap-2 bg-brand-obsidian/75 backdrop-blur-md border border-brand-primary/20 rounded-full pl-2 pr-3 py-1 scale-95 origin-top-left">
                 <div className="w-5 h-5 rounded-full bg-brand-primary flex items-center justify-center">
                   <svg className="w-3 h-3 text-brand-obsidian" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                    <path d="M2 17l6-6 4 4 10-10" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M2 17l6-6 4 4 10-10" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>
                 </div>
                 <span className="text-[9px] font-bold text-white tracking-wider">Arus.id</span>
@@ -1442,7 +1435,7 @@ Technical constraints: Cinematic portrait frame, 3:4 aspect ratio, ultra-premium
                 <select 
                   value={editingTemplateMode} 
                   onChange={(e) => {
-                    const newMode = e.target.value as any;
+                    const newMode = e.target.value as 'poster' | 'carousel';
                     setEditingTemplateMode(newMode);
                     setTempTemplateText(newMode === 'poster' ? customPosterTemplate : customCarouselTemplate);
                   }}
