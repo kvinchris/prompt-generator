@@ -1,0 +1,2363 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Content Engine v5.3 PRO</title>
+    <!-- Tailwind CSS for modern premium look -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Roboto & Plus Jakarta Sans for UI -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Roboto:ital,wght=0,300;0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            primary: '#4fc58c', // Arus.id Green
+                            dark: '#1b4c4a',    // Arus.id Dark Green
+                            obsidian: '#0b1615', // Premium dark
+                            navy: '#0f172a'     // Neutral dark
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        roboto: ['Roboto', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom scrollbar style */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: rgba(79, 197, 140, 0.2);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(15, 23, 42, 0.1);
+            border-radius: 10px;
+        }
+        .dark ::-webkit-scrollbar-thumb:hover {
+            background: rgba(79, 197, 140, 0.4);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 dark:bg-brand-obsidian dark:text-gray-100 font-sans transition-colors duration-300 min-h-screen">
+
+    <!-- STREAMING_CHUNK: Building Header with navigation and theme controls... -->
+    <!-- TOP HEADER BAR -->
+    <header class="border-b border-slate-200 dark:border-brand-dark/30 bg-white/80 dark:bg-brand-obsidian/80 backdrop-blur-md sticky top-0 z-50 px-6 py-4">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-primary to-brand-dark flex items-center justify-center shadow-lg">
+                    <svg class="w-6 h-6 text-brand-obsidian" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="M2 17l6-6 4 4 10-10" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M17 5h5v5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="font-bold text-xl tracking-tight flex items-center gap-2 text-slate-900 dark:text-white">
+                        Content Engine
+                        <span class="text-[10px] bg-brand-primary/10 text-brand-primary px-2 py-0.5 rounded-full border border-brand-primary/20 font-bold">V5.3 PRO</span>
+                    </h1>
+                    <p class="text-xs text-slate-500 dark:text-gray-400">Premium Single Poster & 5-Slide Campaign Carousel Studio</p>
+                </div>
+            </div>
+
+            <!-- ENGINE MODE SELECTOR SWITCH (ELEVATED FOR DESKTOP STABILIZATION) -->
+            <div class="relative z-10 flex bg-slate-100 dark:bg-brand-dark/20 p-1 rounded-xl border border-slate-200 dark:border-brand-dark/30 shadow-inner">
+                <button onclick="setEngineMode('poster')" id="modeBtnPoster" class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-300 bg-white dark:bg-brand-primary text-brand-dark dark:text-brand-obsidian shadow">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    Single Poster
+                </button>
+                <button onclick="setEngineMode('carousel')" id="modeBtnCarousel" class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-300 text-slate-500 dark:text-gray-400 hover:text-slate-800 dark:hover:text-white">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                    </svg>
+                    5-Slide Carousel
+                </button>
+            </div>
+
+            <!-- SYSTEM SETTINGS & THEME -->
+            <div class="flex items-center gap-3">
+                <button onclick="toggleTheme()" class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-gray-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition animate-fade-in" title="Toggle Light/Dark Theme">
+                    <svg id="themeIconSun" class="w-5 h-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707M12 7a5 5 0 100 10 5 5 0 000-10z" />
+                    </svg>
+                    <svg id="themeIconMoon" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                    </svg>
+                </button>
+                <button onclick="openConfigModal()" class="flex items-center gap-2 bg-slate-900 text-white dark:bg-brand-primary dark:text-brand-obsidian font-bold text-sm px-4 py-2.5 rounded-xl shadow-lg hover:opacity-90 transition">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    Settings
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- STREAMING_CHUNK: Designing Main Grid container and responsive Left Sidebar... -->
+    <!-- MAIN BODY CONTAINER -->
+    <main class="max-w-7xl mx-auto px-4 md:px-6 py-6 grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        <!-- SIDEBAR LEFT: CONTROLS & FORM -->
+        <section class="lg:col-span-5 flex flex-col gap-6 lg:max-h-[82vh] lg:overflow-y-auto pr-2 pb-12">
+            
+            <!-- MULTI-TAB WORKSPACE SWITCHER -->
+            <div class="flex border-b border-slate-200 dark:border-brand-dark/30">
+                <button onclick="switchSidebarTab('tabContent')" id="sidebarTabContent" class="flex-1 pb-3 text-sm font-bold border-b-2 border-brand-primary text-brand-primary flex items-center justify-center gap-2 transition">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                    </svg>
+                    Content & Prompts
+                </button>
+                <button onclick="switchSidebarTab('tabDesign')" id="sidebarTabDesign" class="flex-1 pb-3 text-sm font-semibold border-b-2 border-transparent text-slate-500 dark:text-gray-400 hover:text-slate-800 dark:hover:text-white flex items-center justify-center gap-2 transition">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+                    </svg>
+                    Design & Branding
+                </button>
+            </div>
+
+            <!-- TAB 1: CONTENT CONTENT CONTROLS -->
+            <div id="sidebarContentWrapper" class="space-y-6">
+                
+                <!-- PRESET CARD -->
+                <div class="bg-white dark:bg-slate-900/40 p-5 rounded-2xl border border-slate-100 dark:border-brand-dark/20 shadow-sm animate-fade-in">
+                    <div class="flex items-center justify-between mb-3">
+                        <h2 class="text-sm font-bold uppercase tracking-wider text-slate-400 dark:text-brand-primary">Campaign Presets</h2>
+                        <span class="text-xs bg-slate-100 dark:bg-brand-dark/30 text-slate-500 dark:text-brand-primary/80 px-2 py-0.5 rounded">Quick Start</span>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                        <button onclick="applyCampaignPreset('stress')" class="px-3 py-2 text-left rounded-xl bg-slate-50 dark:bg-brand-dark/10 hover:bg-brand-primary/10 hover:text-brand-dark dark:hover:text-brand-primary border border-slate-200/50 dark:border-brand-dark/20 transition group">
+                            <span class="block text-xs font-bold text-slate-600 dark:text-gray-300 group-hover:text-brand-primary">Salary Anxiety</span>
+                            <span class="block text-[10px] text-slate-400 truncate">Stress & pressure relief</span>
+                        </button>
+                        <button onclick="applyCampaignPreset('relief')" class="px-3 py-2 text-left rounded-xl bg-slate-50 dark:bg-brand-dark/10 hover:bg-brand-primary/10 hover:text-brand-dark dark:hover:text-brand-primary border border-slate-200/50 dark:border-brand-dark/20 transition group">
+                            <span class="block text-xs font-bold text-slate-600 dark:text-gray-300 group-hover:text-brand-primary">Financial Freedom</span>
+                            <span class="block text-[10px] text-slate-400 truncate">Hope & relief focus</span>
+                        </button>
+                        <button onclick="applyCampaignPreset('workplace')" class="px-3 py-2 text-left rounded-xl bg-slate-50 dark:bg-brand-dark/10 hover:bg-brand-primary/10 hover:text-brand-dark dark:hover:text-brand-primary border border-slate-200/50 dark:border-brand-dark/20 transition group">
+                            <span class="block text-xs font-bold text-slate-600 dark:text-gray-300 group-hover:text-brand-primary">HR Benefits</span>
+                            <span class="block text-[10px] text-slate-400 truncate">Wellness & balance</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- STREAMING_CHUNK: Setting up Copywriting form fields for Single Poster... -->
+                <!-- SECTION COPY & META DETAILS -->
+                <div class="bg-white dark:bg-slate-900/40 p-5 rounded-2xl border border-slate-100 dark:border-brand-dark/20 shadow-sm space-y-4">
+                    <div class="flex items-center justify-between border-b border-slate-100 dark:border-brand-dark/10 pb-2">
+                        <h2 class="text-sm font-bold uppercase tracking-wider text-slate-400 dark:text-brand-primary">Campaign Copy & Meta</h2>
+                        <span id="badgeCurrentMode" class="text-[10px] bg-brand-primary/10 text-brand-primary px-2.5 py-0.5 rounded-full font-bold">POSTER MODE</span>
+                    </div>
+
+                    <!-- POSTER-SPECIFIC GLOBAL COPY INPUTS -->
+                    <div id="inputsPosterGroup" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 dark:text-gray-400 mb-1">MAIN HEADLINE</label>
+                            <input type="text" id="headlineInput" oninput="handleCopyInputChange()" value="Kerja Keras Saja Tidak Cukup Tanpa Kepastian Finansial" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary transition">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 dark:text-gray-400 mb-1">HIGHLIGHT KEYWORD (Green Highlight)</label>
+                            <input type="text" id="highlightInput" oninput="handleCopyInputChange()" value="Kepastian Finansial" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary transition" placeholder="Word to highlight in #4fc58c">
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 dark:text-gray-400 mb-1">SUPPORT TEXT</label>
+                                <input type="text" id="supportInput" oninput="handleCopyInputChange()" value="Akses gaji instan kapan saja tanpa beban bunga tinggi." class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary transition">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 dark:text-gray-400 mb-1">CTA TEXT</label>
+                                <input type="text" id="ctaInput" oninput="handleCopyInputChange()" value="Tarik Gaji Hari Ini" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary transition">
+                            </div>
+                        </div>
+
+                        <!-- ADVANCED CAMERA HERO CONFIGURATION FOR SINGLE POSTER -->
+                        <div class="space-y-4 pt-3 border-t border-slate-100 dark:border-brand-dark/10">
+                            <div>
+                                <label class="block text-[10px] font-bold text-brand-primary uppercase mb-1">Selected Hero Configuration</label>
+                                <select id="heroConfigSelect" onchange="handleCopyInputChange()" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-2.5 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-brand-primary transition">
+                                    <option value="CONFIGURATION A: INDIVIDUAL HERO (1 Person)" selected>CONFIGURATION A: INDIVIDUAL HERO (1 Person)</option>
+                                    <option value="CONFIGURATION B: CO-WORKING HEROES (2 People - Peer Support)">CONFIGURATION B: CO-WORKING HEROES (2 People - Peer Support)</option>
+                                    <option value="CONFIGURATION C: TEAM WORKSPACE (3-4 People - Collective Mood)">CONFIGURATION C: TEAM WORKSPACE (3-4 People - Collective Mood)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-brand-primary uppercase mb-1">Team Mood Direction</label>
+                                <select id="teamMoodDirSelect" onchange="handleCopyInputChange()" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-2.5 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-brand-primary transition">
+                                    <option value="NOT APPLICABLE: - (Only use this if Configuration A is selected)" selected>NOT APPLICABLE: (Only for Configuration A)</option>
+                                    <option value="STRESS & ANXIETY CONTEXT: A modern tech-office room where 3-4 team members look visibly quiet, mentally overloaded, and distracted; one is rubbing their temples, another staring blankly at a laptop screen, capturing a unified atmosphere of subtle workplace pressure.">STRESS & ANXIETY CONTEXT: Busy tech-office, overloaded team</option>
+                                    <option value="RELIEF & HOPE CONTEXT: A modern tech-office room with 3-4 team members collaborating casually, everyone looks relaxed, focused, and sharing a calm productive atmosphere (Unified Emotion of Relief).">RELIEF & HOPE CONTEXT: 3-4 members collaborating relaxed</option>
+                                    <option value="AMBITION & GROWTH CONTEXT: A dynamic premium workspace with 3-4 modern Indonesian professionals looking highly focused, aligned, and subtly energized while analyzing a screen together, showing quiet corporate confidence and collective ambition.">AMBITION & GROWTH CONTEXT: Dynamic focused workspace, aligned</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-brand-primary uppercase mb-1">Background Mood</label>
+                                <select id="bgMoodSelect" onchange="handleCopyInputChange()" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-2.5 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-brand-primary transition">
+                                    <option value="STRESS / PRESSURE: Slightly messy workspace, unfinished work, dim cinematic lighting, realistic subtle clutter on desks, casting signs of mental pressure." selected>STRESS / PRESSURE: Messy, dim, realistic desk clutter</option>
+                                    <option value="WORKPLACE / PRODUCTIVITY: Premium modern office, clean workspace, active laptops, documents, professional desk setup, believable high-productivity atmosphere.">WORKPLACE / PRODUCTIVITY: Premium clean office, active laptops</option>
+                                    <option value="RELIEF / SOLUTION: Calmer environment, brighter and clean atmosphere, subtle organization cues, premium hopeful lighting with soft ambient green edge-glow.">RELIEF / SOLUTION: Calmer, brighter atmosphere, hopeful lighting</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- STREAMING_CHUNK: Integrating Carousel-Specific input variables and sub-tabs... -->
+                    <!-- CAROUSEL-SPECIFIC GLOBAL & SLIDE-BY-SLIDE CONTENT LAYOUTS -->
+                    <div id="inputsCarouselGroup" class="space-y-4 hidden">
+                        <!-- Global Carousel Metadata Details (V5.3 Request) -->
+                        <div class="space-y-3 pb-3 border-b border-slate-100 dark:border-brand-dark/10">
+                            <span class="block text-[10px] font-bold text-brand-primary uppercase tracking-wider">Global Carousel Variables</span>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 dark:text-gray-400 mb-1">MAIN HEADLINE (Global)</label>
+                                <input type="text" id="carouselGlobalHeadline" oninput="handleCopyInputChange()" value="Kesejahteraan Finansial Karyawan Adalah Kunci Utama Produktivitas" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-brand-primary transition">
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-500 dark:text-gray-400 mb-1">HIGHLIGHT KEYWORD</label>
+                                    <input type="text" id="carouselGlobalHighlight" oninput="handleCopyInputChange()" value="Kesejahteraan Finansial" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-brand-primary transition">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-500 dark:text-gray-400 mb-1">CTA TEXT</label>
+                                    <input type="text" id="carouselGlobalCta" oninput="handleCopyInputChange()" value="Coba Arus.id Sekarang" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-brand-primary transition">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 dark:text-gray-400 mb-1">SUPPORT TEXT</label>
+                                <textarea id="carouselGlobalSupport" oninput="handleCopyInputChange()" rows="2" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-brand-primary transition resize-none">Berikan akses gaji fleksibel kapan saja untuk membantu arus kas harian tim Anda tanpa beban bunga tinggi.</textarea>
+                            </div>
+                        </div>
+
+                        <!-- Slide selector sub-tabs -->
+                        <div>
+                            <span class="block text-[10px] font-bold text-slate-400 uppercase mb-1.5">Configure Slide Contents (WYSIWYG)</span>
+                            <div class="flex gap-1 bg-slate-100 dark:bg-slate-800/80 p-1 rounded-xl">
+                                <button type="button" onclick="setSlideIndex(0)" id="subTabSlide0" class="flex-1 py-1.5 text-[10px] font-bold rounded-lg transition-all duration-300 bg-brand-primary text-brand-obsidian">Slide 1</button>
+                                <button type="button" onclick="setSlideIndex(1)" id="subTabSlide1" class="flex-1 py-1.5 text-[10px] font-semibold rounded-lg text-slate-500 dark:text-gray-400 hover:text-slate-800">Slide 2</button>
+                                <button type="button" onclick="setSlideIndex(2)" id="subTabSlide2" class="flex-1 py-1.5 text-[10px] font-semibold rounded-lg text-slate-500 dark:text-gray-400 hover:text-slate-800">Slide 3</button>
+                                <button type="button" onclick="setSlideIndex(3)" id="subTabSlide3" class="flex-1 py-1.5 text-[10px] font-semibold rounded-lg text-slate-500 dark:text-gray-400 hover:text-slate-800">Slide 4</button>
+                                <button type="button" onclick="setSlideIndex(4)" id="subTabSlide4" class="flex-1 py-1.5 text-[10px] font-semibold rounded-lg text-slate-500 dark:text-gray-400 hover:text-slate-800">Slide 5</button>
+                            </div>
+                        </div>
+
+                        <!-- Current slide values editor -->
+                        <div class="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-100 dark:border-brand-dark/10 space-y-3">
+                            <div>
+                                <label class="block text-[10px] font-bold text-brand-primary uppercase mb-1" id="lblSlideEditorHeadline">Slide 1 Headline</label>
+                                <input type="text" id="carouselSlideHeadline" oninput="updateCarouselSlideText()" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-brand-primary transition">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-brand-primary uppercase mb-1" id="lblSlideEditorSupport">Slide 1 Support Text</label>
+                                <textarea id="carouselSlideSupport" oninput="updateCarouselSlideText()" rows="2" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-brand-primary transition resize-none"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- REUSABLE META CONFIGURATIONS -->
+                    <div class="grid grid-cols-2 gap-3 pt-2">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 dark:text-gray-400 mb-1">EMOTION CORE</label>
+                            <select id="emotionSelect" onchange="handleCopyInputChange()" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-2.5 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary transition">
+                                <option value="stress" selected>Stress & Pressure</option>
+                                <option value="anxiety">Anxiety / Overwhelm</option>
+                                <option value="hope">Hope & Clarity</option>
+                                <option value="relief">Relief & Solution</option>
+                                <option value="ambition">Ambition & Growth</option>
+                                <option value="confusion">Confusion / Chaos</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 dark:text-gray-400 mb-1">CAMPAIGN CONTEXT</label>
+                            <select id="contextSelect" onchange="handleCopyInputChange()" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-2.5 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary transition">
+                                <option value="financial wellbeing" selected>Financial Wellbeing</option>
+                                <option value="salary access">Salary Access (Earned Wage)</option>
+                                <option value="workplace wellness">Workplace Wellness</option>
+                                <option value="employee benefit">Employee Benefit</option>
+                                <option value="productivity">Workplace Productivity</option>
+                                <option value="career growth">Career Growth</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 dark:text-gray-400 mb-1">HERO SCENARIO MODE</label>
+                            <select id="heroModeSelect" onchange="handleCopyInputChange()" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-2.5 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary transition">
+                                <option value="SMARTPHONE" selected>Smartphone (Fintech Alert / App UI)</option>
+                                <option value="WORKSPACE">Workspace (Laptop / Office Setup)</option>
+                                <option value="HUMAN">Human Interaction (Collaborative Team)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 dark:text-gray-400 mb-1">TYPOGRAPHY STYLE</label>
+                            <select id="typoSelect" onchange="handleCopyInputChange()" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-2.5 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary transition">
+                                <option value="bold fintech" selected>Bold Modern Fintech</option>
+                                <option value="premium editorial">Premium Editorial</option>
+                                <option value="emotional bold">Emotional High Contrast</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STREAMING_CHUNK: Designing the Live Prompt Center dark-terminal panel... -->
+                <!-- ENLARGED GEMINI LIVE PROMPT CENTER -->
+                <div class="bg-gradient-to-b from-brand-dark/20 to-brand-obsidian/40 dark:from-brand-dark/30 dark:to-brand-obsidian/90 p-5 rounded-3xl border border-brand-primary/30 shadow-2xl relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-brand-primary/10 rounded-full blur-2xl"></div>
+                    <div class="flex items-center justify-between border-b border-brand-primary/20 pb-3 mb-4 flex-wrap gap-2">
+                        <div class="flex items-center gap-2">
+                            <span class="w-2.5 h-2.5 rounded-full bg-brand-primary animate-pulse"></span>
+                            <h2 class="text-xs font-bold uppercase tracking-wider text-brand-primary">Gemini Live Prompt Center</h2>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <button onclick="openTemplateEditorModal()" class="text-[10px] text-brand-primary hover:underline flex items-center gap-1 bg-brand-primary/5 px-2 py-1 rounded border border-brand-primary/20 animate-pulse" title="Edit Master System Prompt Template">
+                                <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                    <path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                </svg>
+                                Edit Base Template
+                            </button>
+                            <div class="flex bg-brand-obsidian/60 p-0.5 rounded-lg border border-brand-primary/10">
+                                <button onclick="switchPromptTab('master')" id="promptTabMaster" class="px-2.5 py-1 text-[10px] font-bold rounded-md bg-brand-primary text-brand-obsidian">Master System Prompt</button>
+                                <button onclick="switchPromptTab('imagen')" id="promptTabImagen" class="px-2.5 py-1 text-[10px] font-semibold rounded-md text-gray-400 hover:text-white">Gemini Image Prompt</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ENLARGED INTERACTIVE TERMINAL FIELD (380px High) -->
+                    <div class="relative mb-4">
+                        <textarea id="livePromptArea" oninput="handlePromptAreaInput()" class="w-full h-[380px] bg-brand-obsidian/90 border border-brand-primary/20 rounded-2xl p-4 font-mono text-[11px] leading-relaxed text-slate-300 dark:text-brand-primary/90 focus:outline-none focus:border-brand-primary/60 resize-none overflow-y-auto scrollbar-thin scrollbar-thumb-brand-primary/20"></textarea>
+                        <div class="absolute bottom-3 right-3 flex items-center gap-2">
+                            <span class="text-[9px] bg-brand-primary/20 text-brand-primary px-2 py-0.5 rounded font-mono">Dynamic Compile Ready</span>
+                        </div>
+                    </div>
+
+                    <!-- ACTION BUTTONS -->
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="copyToClipboard()" class="w-full bg-brand-primary text-brand-obsidian font-bold text-xs py-3 px-4 rounded-xl shadow-lg hover:opacity-90 active:scale-95 transition duration-150 flex items-center justify-center gap-2">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                            </svg>
+                            Copy Selected Prompt
+                        </button>
+                        <button onclick="saveCurrentPromptToHistory()" class="w-full bg-white/10 hover:bg-white/20 text-white font-bold text-xs py-3 px-4 rounded-xl border border-white/20 transition duration-150 flex items-center justify-center gap-2">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+                            </svg>
+                            Save to History
+                        </button>
+                    </div>
+                </div>
+
+                <!-- RIWAYAT PENYIMPANAN -->
+                <div class="bg-white dark:bg-slate-900/40 p-5 rounded-2xl border border-slate-100 dark:border-brand-dark/20 shadow-sm space-y-4">
+                    <div class="flex items-center justify-between border-b border-slate-100 dark:border-brand-dark/10 pb-2">
+                        <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-brand-primary">Prompt History Logs</h2>
+                        <button onclick="clearAllHistory()" class="text-[10px] text-red-400 hover:underline">Clear All</button>
+                    </div>
+                    <div id="historyLogsList" class="space-y-2 max-h-[220px] overflow-y-auto pr-1">
+                        <!-- History card elements injected dynamically -->
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- STREAMING_CHUNK: Setting up Sidebar Tab 2 (Design and Typography Controls)... -->
+            <!-- TAB 2: DESIGN & BRANDING CONTROLS -->
+            <div id="sidebarDesignWrapper" class="space-y-6 hidden">
+                
+                <!-- TYPOGRAPHY POSITION & SCALING CONTROLS -->
+                <div class="bg-white dark:bg-slate-900/40 p-5 rounded-2xl border border-slate-100 dark:border-brand-dark/20 shadow-sm space-y-5">
+                    <h2 class="text-sm font-bold uppercase tracking-wider text-slate-400 dark:text-brand-primary">Interactive Layout Adjustments</h2>
+                    
+                    <div>
+                        <div class="flex justify-between text-xs font-semibold text-slate-500 dark:text-gray-400 mb-1">
+                            <span>Headline Font Size</span>
+                            <span id="valHeadlineSize">34px</span>
+                        </div>
+                        <input type="range" id="sizeHeadlineSlider" oninput="adjustDesignValue('headlineSize', this.value)" min="24" max="52" value="34" class="w-full accent-brand-primary">
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between text-xs font-semibold text-slate-500 dark:text-gray-400 mb-1">
+                            <span>Support Font Size</span>
+                            <span id="valSupportSize">14px</span>
+                        </div>
+                        <input type="range" id="sizeSupportSlider" oninput="adjustDesignValue('supportSize', this.value)" min="10" max="22" value="14" class="w-full accent-brand-primary">
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between text-xs font-semibold text-slate-500 dark:text-gray-400 mb-1">
+                            <span>Backdrop Panel Position Y</span>
+                            <span id="valLayoutY">70%</span>
+                        </div>
+                        <input type="range" id="posLayoutYSlider" oninput="adjustDesignValue('layoutY', this.value)" min="10" max="90" value="70" class="w-full accent-brand-primary">
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between text-xs font-semibold text-slate-500 dark:text-gray-400 mb-1">
+                            <span>Backdrop Blur Intensity</span>
+                            <span id="valBlurIntensity">12px</span>
+                        </div>
+                        <input type="range" id="blurIntensitySlider" oninput="adjustDesignValue('blurIntensity', this.value)" min="0" max="30" value="12" class="w-full accent-brand-primary">
+                    </div>
+                </div>
+
+                <!-- BRAND PLACEMENT CONTROLS -->
+                <div class="bg-white dark:bg-slate-900/40 p-5 rounded-2xl border border-slate-100 dark:border-brand-dark/20 shadow-sm space-y-4">
+                    <h2 class="text-sm font-bold uppercase tracking-wider text-slate-400 dark:text-brand-primary">Branding Options</h2>
+                    
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 dark:text-gray-400 mb-1">ARUS.ID LOGO ALIGNMENT</label>
+                        <div class="grid grid-cols-3 gap-2">
+                            <button onclick="adjustDesignValue('logoAlign', 'left')" id="btnLogoLeft" class="px-3 py-1.5 rounded-lg border border-brand-primary bg-brand-primary/10 text-brand-primary text-xs font-semibold">Left Aligned</button>
+                            <button onclick="adjustDesignValue('logoAlign', 'center')" id="btnLogoCenter" class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-xs font-semibold">Centered</button>
+                            <button onclick="adjustDesignValue('logoAlign', 'right')" id="btnLogoRight" class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-xs font-semibold">Right Aligned</button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 dark:text-gray-400 mb-1">MOCKUP PHOTO DIRECTION</label>
+                        <select id="mockupPhotoSelect" onchange="adjustDesignValue('mockupPhoto', this.value)" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-2.5 py-2 text-sm focus:outline-none">
+                            <option value="corporate-stress" selected>Moody Corporate Distraction (Dark)</option>
+                            <option value="modern-office">High-End Collaborative Workplace (Bright)</option>
+                            <option value="jakarta-commuter">Jakarta Professional Transit (Transit)</option>
+                        </select>
+                    </div>
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- STREAMING_CHUNK: Generating Right Sidebar / Mockup Visual Canvas container... -->
+        <!-- RIGHT MAIN CONTENT: INTERACTIVE LIVE POSTER / CAROUSEL VISUAL CANVAS -->
+        <section class="lg:col-span-7 flex flex-col gap-4">
+            
+            <div class="bg-white dark:bg-slate-900/20 p-4 rounded-3xl border border-slate-200/50 dark:border-brand-dark/30 shadow-xl space-y-4">
+                
+                <!-- MOCKUP CANVAS WRAPPER (FOR 3:4 PORTRAIT MOCKUPS) -->
+                <div class="relative w-full max-w-[430px] mx-auto aspect-[3/4] bg-brand-dark/50 rounded-2xl overflow-hidden shadow-2xl border border-brand-dark/40" id="visualMockupViewport">
+                    
+                    <!-- REAL PHOTO BACKGROUND WRAPPER -->
+                    <div id="mockupBackgroundPhoto" class="absolute inset-0 bg-cover bg-center transition-all duration-700 brightness-75 scale-100 animate-fade-in" style="background-image: url('https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=800');"></div>
+                    
+                    <!-- AMBIENT REACTIVE GRADIENT TINT -->
+                    <div id="ambientGradientTint" class="absolute inset-0 bg-gradient-to-t from-brand-dark/95 via-brand-dark/50 to-transparent mix-blend-multiply opacity-90 transition-all duration-500"></div>
+                    
+                    <!-- CAROUSEL SPECIFIC PAGINATION INDICATOR (HEADER RIGHT) -->
+                    <div id="carouselPageBadge" class="absolute top-4 right-4 bg-brand-obsidian/75 backdrop-blur-md border border-brand-primary/20 text-brand-primary text-[10px] font-bold px-2.5 py-1 rounded-full z-20 hidden">
+                        SLIDE 1 OF 5
+                    </div>
+
+                    <!-- FLOATING PREVIEW GLASSMORPHIC BRANDED UI (TOP LEFT) -->
+                    <div class="absolute top-4 left-4 z-20 flex items-center gap-2 bg-brand-obsidian/75 backdrop-blur-md border border-brand-primary/20 rounded-full pl-2 pr-3 py-1 scale-95 origin-top-left">
+                        <div class="w-5 h-5 rounded-full bg-brand-primary flex items-center justify-center">
+                            <svg class="w-3 h-3 text-brand-obsidian" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                <path d="M2 17l6-6 4 4 10-10" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <span class="text-[9px] font-bold text-white tracking-wider">Arus.id</span>
+                    </div>
+
+                    <!-- FLOATING FINTECH GLASS INTERFACE CARDS -->
+                    <div id="floatingUiObjects" class="absolute inset-0 pointer-events-none z-10">
+                        <!-- Card 1: Smartphone Salary Alert Box -->
+                        <div id="floatingPhoneAlert" class="absolute bottom-1/3 left-6 right-6 p-4 rounded-2xl bg-white/10 dark:bg-brand-obsidian/45 backdrop-blur-md border border-white/20 shadow-2xl transition-all duration-500 max-w-[260px] animate-pulse">
+                            <div class="flex items-center gap-2 mb-1">
+                                <div class="w-2.5 h-2.5 rounded-full bg-brand-primary"></div>
+                                <span class="text-[9px] text-brand-primary font-bold tracking-wider">SALARY CREDIT NOTIFICATION</span>
+                            </div>
+                            <h4 class="text-xs font-bold text-white mb-0.5">Rp 8,500,000 Transferred</h4>
+                            <p class="text-[8px] text-gray-300">Earned salary accessed early via Arus.id</p>
+                        </div>
+                    </div>
+
+                    <!-- DESIGN ADJUSTABLE CONTENT PLACEMENT BOX -->
+                    <div id="customBackdropPanel" class="absolute left-4 right-4 p-5 rounded-2xl bg-brand-obsidian/65 backdrop-blur-md border border-brand-primary/20 shadow-2xl z-20 transition-all duration-300 flex flex-col justify-between" style="top: 70%; backdrop-filter: blur(12px);">
+                        
+                        <!-- TEXT AREA WRAP WRAPPER -->
+                        <div>
+                            <!-- SUB-BRAND ARUS MINI IDENTIFIER -->
+                            <div class="flex items-center gap-1.5 mb-2" id="brandLogoContainer">
+                                <div class="w-1.5 h-1.5 rounded-full bg-brand-primary"></div>
+                                <span class="text-[8px] font-bold tracking-widest text-slate-300 uppercase">A R U S . I D  C A M P A I G N</span>
+                            </div>
+
+                            <!-- PREVIEW MAIN HEADLINE -->
+                            <h3 id="previewHeadline" class="font-roboto font-black text-white leading-snug tracking-tight mb-2 uppercase break-words transition-all duration-200" style="font-size: 34px;">
+                                Kerja Keras Saja Tidak Cukup Tanpa <span class="text-brand-primary">Kepastian Finansial</span>
+                            </h3>
+
+                            <!-- PREVIEW SUPPORT TEXT -->
+                            <p id="previewSupportText" class="text-gray-300 font-medium leading-relaxed mb-4 text-xs transition-all duration-200" style="font-size: 14px;">
+                                Akses gaji instan kapan saja tanpa beban bunga tinggi.
+                            </p>
+                        </div>
+
+                        <!-- CTA BUTTON & FOOTER FLEX -->
+                        <div class="flex items-center justify-between border-t border-brand-primary/10 pt-3">
+                            <span id="previewCta" class="text-[9px] bg-brand-primary text-brand-obsidian font-extrabold px-3 py-1.5 rounded-lg tracking-wider uppercase shadow-md transition-all duration-150">
+                                Tarik Gaji Hari Ini
+                            </span>
+                            <span class="text-[8px] font-semibold text-slate-400">FINTECH PLATFORM</span>
+                        </div>
+                    </div>
+
+                    <!-- PERSISTENT FOOTER FOR CAROUSEL SLIDER CONTROLS -->
+                    <div id="carouselControlFooter" class="absolute bottom-3 left-4 right-4 z-30 flex justify-between items-center bg-brand-obsidian/85 backdrop-blur-md px-3 py-2 rounded-xl border border-brand-primary/25 hidden">
+                        <button onclick="setSlideIndex(carouselActiveIndex - 1)" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-white text-xs disabled:opacity-40 transition-colors" id="btnPrevSlide">◀</button>
+                        <div class="flex gap-1.5 items-center">
+                            <span class="w-2 h-2 rounded-full bg-brand-primary transition-all duration-300" id="carouselDot0"></span>
+                            <span class="w-2 h-2 rounded-full bg-slate-600 transition-all duration-300" id="carouselDot1"></span>
+                            <span class="w-2 h-2 rounded-full bg-slate-600 transition-all duration-300" id="carouselDot2"></span>
+                            <span class="w-2 h-2 rounded-full bg-slate-600 transition-all duration-300" id="carouselDot3"></span>
+                            <span class="w-2 h-2 rounded-full bg-slate-600 transition-all duration-300" id="carouselDot4"></span>
+                        </div>
+                        <button onclick="setSlideIndex(carouselActiveIndex + 1)" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-white text-xs disabled:opacity-40 transition-colors" id="btnNextSlide">▶</button>
+                    </div>
+
+                </div>
+
+                <!-- DOWNLOAD & EXPORT TRIGGER -->
+                <div class="flex gap-3 justify-center max-w-[430px] mx-auto">
+                    <button onclick="renderHighResPosterExport()" class="flex-1 bg-slate-900 text-white dark:bg-slate-800 dark:hover:bg-slate-700 border border-slate-700/50 py-3.5 rounded-2xl font-bold text-xs flex items-center justify-center gap-2 shadow-md transition hover:bg-slate-800">
+                        <svg class="w-4 h-4 text-brand-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                        </svg>
+                        Download Current Slide (1200x1600 px)
+                    </button>
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- BEAUTIFUL INTERNAL CONFIRMATION MODAL -->
+    <div id="confirmModal" class="fixed inset-0 bg-brand-obsidian/75 backdrop-blur-md z-[100] flex items-center justify-center hidden">
+        <div class="bg-slate-900 border border-brand-primary/20 max-w-sm w-full mx-4 rounded-3xl p-6 shadow-2xl space-y-4 text-center animate-fade-in">
+            <div class="w-12 h-12 bg-red-500/10 text-red-400 rounded-2xl flex items-center justify-center mx-auto">
+                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+            </div>
+            <div>
+                <h3 class="font-bold text-white text-lg">Clear All History Logs?</h3>
+                <p class="text-xs text-gray-400 mt-1">This action will delete all saved prompt history in your local browser storage. This cannot be undone.</p>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+                <button onclick="closeConfirmationModal(false)" class="bg-white/10 text-white font-semibold text-xs py-3 rounded-xl hover:bg-white/15 transition">Cancel</button>
+                <button onclick="closeConfirmationModal(true)" class="bg-red-500 hover:bg-red-600 text-white font-semibold text-xs py-3 rounded-xl transition">Yes, Clear All</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- STREAMING_CHUNK: Designing Master Template customizer Modal interface... -->
+    <!-- MASTER TEMPLATE EDITOR MODAL -->
+    <div id="templateEditModal" class="fixed inset-0 bg-brand-obsidian/85 backdrop-blur-md z-[100] flex items-center justify-center hidden">
+        <div class="bg-slate-950 border border-brand-primary/30 max-w-3xl w-full mx-4 rounded-3xl p-6 shadow-2xl space-y-4 flex flex-col max-h-[90vh]">
+            <div class="flex justify-between items-center border-b border-brand-primary/20 pb-3">
+                <div class="flex items-center gap-2">
+                    <div class="w-2 h-2 rounded-full bg-brand-primary"></div>
+                    <h3 class="font-bold text-white text-base">Custom Master Template Editor</h3>
+                </div>
+                <button onclick="closeTemplateEditorModal()" class="text-gray-400 hover:text-white text-sm">✕</button>
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center bg-brand-obsidian/40 p-3 rounded-xl border border-brand-primary/10">
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Select Template To Edit</label>
+                    <select id="editTemplateSelector" onchange="loadTemplateToEditorTextarea()" class="w-full bg-slate-900 border border-brand-primary/20 rounded-lg px-3 py-1.5 text-xs text-brand-primary focus:outline-none">
+                        <option value="poster" selected>Single Poster Master Prompt</option>
+                        <option value="carousel">5-Slide Carousel Master Prompt</option>
+                    </select>
+                </div>
+                <div class="text-[10px] text-slate-400 leading-relaxed">
+                    <span class="text-brand-primary font-semibold">Pro-Tip:</span> Pastikan kamu tetap menyertakan tag placeholder agar sinkronisasi real-time tetap berfungsi.
+                </div>
+            </div>
+
+            <div class="flex-1 min-h-[250px] flex flex-col">
+                <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1.5">Raw Prompt Framework Layout</label>
+                <textarea id="templateEditorArea" class="flex-1 w-full bg-brand-obsidian/90 border border-brand-primary/20 rounded-2xl p-4 font-mono text-[11px] leading-relaxed text-slate-200 focus:outline-none focus:border-brand-primary/60 resize-none overflow-y-auto scrollbar-thin scrollbar-thumb-brand-primary/20"></textarea>
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-2 justify-between items-center pt-2 border-t border-brand-primary/10">
+                <button onclick="resetSelectedTemplateToDefault()" class="w-full sm:w-auto px-4 py-2 text-xs font-bold text-red-400 hover:text-red-300 transition flex items-center gap-1.5 self-start sm:self-center">
+                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 15H19" />
+                    </svg>
+                    Reset Selected to Default
+                </button>
+                <div class="flex gap-2 w-full sm:w-auto">
+                    <button onclick="closeTemplateEditorModal()" class="flex-1 sm:flex-none bg-white/10 text-white font-semibold text-xs px-5 py-2.5 rounded-xl hover:bg-white/15 transition">Cancel</button>
+                    <button onclick="saveCustomTemplate()" class="flex-1 sm:flex-none bg-brand-primary text-brand-obsidian font-bold text-xs px-6 py-2.5 rounded-xl hover:opacity-90 transition">Save Custom Template</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION -->
+    <div id="toastNotification" class="fixed bottom-6 right-6 bg-slate-900 border border-brand-primary/30 px-5 py-3.5 rounded-2xl shadow-2xl flex items-center gap-3 transform translate-y-24 opacity-0 transition-all duration-300 z-[100]">
+        <div class="w-2 h-2 rounded-full bg-brand-primary animate-ping"></div>
+        <p class="text-xs text-white font-medium" id="toastMessage">Teks berhasil disalin!</p>
+    </div>
+
+    <!-- STREAMING_CHUNK: Defining Safe Storage, Core JS State variables, and new defaults... -->
+    <!-- BACKGROUND COMPILER SCRIPT -->
+    <script>
+        // SAFE STORAGE ENGINE (Anti-iFrame crash wrapper for share-links)
+        const SafeStorage = {
+            isSupported() {
+                try {
+                    const testKey = '__storage_test__';
+                    localStorage.setItem(testKey, testKey);
+                    localStorage.removeItem(testKey);
+                    return true;
+                } catch (e) {
+                    return false;
+                }
+            },
+            getItem(key) {
+                if (this.isSupported()) {
+                    return localStorage.getItem(key);
+                }
+                return this.inMemoryStorage[key] || null;
+            },
+            setItem(key, value) {
+                if (this.isSupported()) {
+                    try {
+                        localStorage.setItem(key, value);
+                    } catch (e) {
+                        this.inMemoryStorage[key] = String(value);
+                    }
+                } else {
+                    this.inMemoryStorage[key] = String(value);
+                }
+            },
+            removeItem(key) {
+                if (this.isSupported()) {
+                    localStorage.removeItem(key);
+                } else {
+                    delete this.inMemoryStorage[key];
+                }
+            },
+            inMemoryStorage: {}
+        };
+
+        // EXCLUSIVE SINGLE POSTER & CAROUSEL MASTER PROMPT TEMPLATES (LOCK-SPECIFIED)
+        const DEFAULT_POSTER_PROMPT = `🧠 ARUS.ID — MASTER POSTER PROMPT SYSTEM V4.5
+Premium Emotional Fintech Campaign Engine
+(Gemini Optimized + Premium Editorial Layout + Fintech UI Layer + Brand Locked System)
+━━━━━━━━━━━━━━━━━━━━━━
+🎯 ROLE
+━━━━━━━━━━━━━━━━━━━━━━
+You are a world-class advertising creative director specializing in:
+
+premium fintech lifestyle campaigns
+emotional cinematic storytelling
+editorial-grade poster composition
+premium social advertising visuals
+fintech brand advertising
+Your job is to create a premium, high-quality, scroll-stopping poster for Arus.id that feels:
+
+emotionally relatable
+cinematic
+premium fintech
+editorial-grade
+highly polished
+human-centered
+realistic and believable
+The final output should feel like:
+“A premium fintech campaign poster captured from a real emotional moment.”
+The result must feel:
+Netflix documentary
+×
+Apple campaign
+×
+premium fintech advertising
+×
+high-performing social poster
+NOT:
+
+stock photo
+Canva template
+generic fintech ad
+infographic-heavy design
+overdesigned AI visual
+unrealistic CGI poster
+━━━━━━━━━━━━━━━━━━━━━━
+⚙️ INPUT VARIABLES
+(ONLY CHANGE THIS SECTION)
+━━━━━━━━━━━━━━━━━━━━━━
+BRAND:Arus.id
+MAIN HEADLINE:
+{{headline}}
+SUPPORT TEXT:
+{{support_text}}
+CTA TEXT:
+{{cta}}
+EMOTION CORE:
+{{emotion_core}}
+CAMPAIGN CONTEXT:
+{{campaign_context}}
+TYPOGRAPHY STYLE:
+{{typography_style}}
+HERO SCENARIO MODE:
+{{hero_mode}}
+SELECTED HERO CONFIGURATION:
+{{selected_hero_configuration}}
+TEAM MOOD DIRECTION:
+{{team_mood_direction}}
+BACKGROUND MOOD:
+{{background_mood}}
+━━━━━━━━━━━━━━━━━━━━━━
+🧠 CORE CREATIVE PRINCIPLE
+(MOST IMPORTANT)
+━━━━━━━━━━━━━━━━━━━━━━
+⚠️ STRICT RULE:
+ONE POSTER = ONE HUMAN MOMENT = ONE EMOTION
+The visual must communicate:
+
+one relatable emotional situation
+one cinematic frozen moment
+one emotional struggle or transformation
+one clear emotional message
+DO NOT:
+
+mix multiple storylines
+use multiple hero characters
+split attention into many narratives
+create infographic-heavy layouts
+create overly corporate visuals
+make the scene feel staged
+The image should feel like:
+“Someone captured a real emotional moment.”
+━━━━━━━━━━━━━━━━━━━━━━
+🎬 HERO VISUAL ENGINE
+━━━━━━━━━━━━━━━━━━━━━━
+The HERO VISUAL must ALWAYS be generated from:
+MAIN HEADLINE → HUMAN MOMENT
+Interpret the emotional meaning behind the headline.
+Convert it into:
+ONE emotionally relatable cinematic real-life scene.
+━━━━━━━━━━━━━━━━━━━━━━
+VISUAL TRANSLATION LOGIC
+━━━━━━━━━━━━━━━━━━━━━━
+If headline implies:
+FINANCIAL STRESS
+→ subtle struggle, pressure, distraction
+Examples:
+
+checking low account balance
+overwhelmed at desk
+salary anxiety
+distracted from work
+financial burden subtly affecting emotion
+WORKPLACE PRESSURE
+→ emotional fatigue in a professional setting
+Examples:
+
+tired office worker
+mentally overloaded
+workplace distraction
+concern affecting focus
+FINANCIAL RELIEF / SOLUTION
+→ emotional calmness
+→ cleaner atmosphere
+→ brighter tone
+→ optimism without exaggeration
+IMPORTANT:
+Never over-explain the story.
+The emotion should be visually implied.
+━━━━━━━━━━━━━━━━━━━━━━
+🧍 HERO SYSTEM (LOCKED)
+━━━━━━━━━━━━━━━━━━━━━━
+Always use:
+ONE hero person only
+Age:
+20s–30s modern professional
+Representation:
+modern Indonesian / urban professional lifestyle
+Expression:
+emotionally authentic
+Avoid:
+
+fake smiles
+exaggerated acting
+overdramatic emotion
+unrealistic stock-photo poses
+Emotion should feel:
+subtle,
+human,
+realistic,
+cinematic,
+believable.
+━━━━━━━━━━━━━━━━━━━━━━
+🎥 CINEMATIC COMPOSITION SYSTEM
+━━━━━━━━━━━━━━━━━━━━━━
+Always use:
+
+medium shot or slight close-up
+cinematic framing
+premium editorial composition
+shallow depth-of-field
+ultra-sharp hero subject
+asymmetrical composition
+strong focal hierarchy
+intentional negative space for typography
+The composition should feel:
+premium,
+modern,
+editorial,
+emotionally cinematic.
+Must feel like:
+Apple campaign
+×
+Netflix documentary still
+×
+premium fintech advertising
+━━━━━━━━━━━━━━━━━━━━━━
+🌆 ENVIRONMENT STORYTELLING
+━━━━━━━━━━━━━━━━━━━━━━
+The environment must emotionally support the story.
+STRESS / PRESSURE:
+
+slightly messy workspace
+unfinished work
+dim lighting
+realistic subtle clutter
+signs of mental pressure
+WORKPLACE / PRODUCTIVITY:
+
+premium office
+modern workspace
+laptop, documents, desk setup
+believable productivity atmosphere
+RELIEF / SOLUTION:
+
+calmer environment
+brighter atmosphere
+subtle organization cues
+premium hopeful feeling
+Environment should feel:
+real,
+lived-in,
+premium,
+believable.
+Never staged.
+━━━━━━━━━━━━━━━━━━━━━━
+💡 CINEMATIC LIGHTING ENGINE
+━━━━━━━━━━━━━━━━━━━━━━
+Use premium emotional lighting.
+Preferred style:
+EMOTIONAL CONTRAST LIGHTING
+One side:
+darker muted tones
+(stress / uncertainty)
+Other side:
+soft fintech glow
+(relief / solution)
+OR
+single cinematic key light
+with realistic shadow depth.
+Lighting mood:
+warm,
+premium,
+human,
+editorial,
+cinematic.
+Avoid:
+
+fake CGI glow
+oversaturated effects
+extreme movie lighting
+━━━━━━━━━━━━━━━━━━━━━━
+🎨 ARUS.ID BRAND VISUAL SYSTEM
+(BRAND LOCKED STYLE)
+━━━━━━━━━━━━━━━━━━━━━━
+IMPORTANT:
+The poster must subtly reflect Arus.id visual identity.
+Brand Colors:
+Primary Green:
+#4fc58c
+Dark Green:
+#1b4c4a
+APPLICATION RULES:
+Use Primary Green (#4fc58c) for:
+
+headline highlight accents
+CTA emphasis
+fintech glow
+UI highlights
+selected typography keywords
+subtle divider lines
+premium accent lighting
+Use Dark Green (#1b4c4a) for:
+
+cinematic background tint
+premium shadow tones
+dark gradients
+atmosphere depth
+fintech visual mood
+Visual balance should feel:
+premium,
+subtle,
+editorial,
+modern.
+Never:
+
+overpower scene with green
+use flat green background
+create saturated fintech look
+Overall feeling:
+dark premium fintech aesthetic
+with elegant green accents.
+Think:
+Stripe
+×
+Apple
+×
+modern fintech campaign
+━━━━━━━━━━━━━━━━━━━━━━
+🎨 COLOR SYSTEM
+━━━━━━━━━━━━━━━━━━━━━━
+Base colors:
+
+muted dark blue
+soft gray
+charcoal black
+elegant neutrals
+premium white highlights
+Accent colors:
+
+Primary Green #4fc58c
+Dark Green #1b4c4a
+restrained orange/red urgency
+soft fintech blue glow
+Avoid:
+
+oversaturated color palette
+cartoon feel
+noisy visuals
+━━━━━━━━━━━━━━━━━━━━━━
+📱 PREMIUM FLOATING UI SYSTEM
+(PROMPT 3 VISUAL ENERGY)
+━━━━━━━━━━━━━━━━━━━━━━
+Use subtle floating fintech visual elements ONLY when relevant.
+Allowed elements:
+
+floating smartphone UI
+salary notification
+spending alert
+payment reminder cards
+fintech dashboard fragments
+blurred financial notifications
+calendar reminders
+subtle graph indicators
+salary access interface
+soft fintech notification cards
+Visual style:
+premium,
+ambient,
+subtle,
+cinematic.
+The UI must feel:
+softly integrated into reality.
+IMPORTANT:
+The UI SUPPORTS emotion.
+Never dominate composition.
+Avoid:
+
+dashboard overload
+infographic feel
+cluttered floating elements
+too many overlays
+Opacity:
+soft and atmospheric.
+━━━━━━━━━━━━━━━━━━━━━━
+🧩 VISUAL DEPTH & ATMOSPHERE
+━━━━━━━━━━━━━━━━━━━━━━
+Create premium visual richness using:
+
+cinematic gradient transitions
+layered foreground/background depth
+realistic environmental blur
+elegant light falloff
+soft fintech glow
+subtle atmosphere haze
+cinematic shadow layering
+Optional:
+
+dark-to-bright transition
+emotional gradient split
+premium glow accents
+Must feel like:
+premium campaign photography.
+NOT:
+overdesigned marketing poster.
+━━━━━━━━━━━━━━━━━━━━━━
+🧠 TYPOGRAPHY COMPOSITION ENGINE
+(PROMPT 3 STYLE)
+━━━━━━━━━━━━━━━━━━━━━━
+Typography must feel like:
+premium editorial campaign design.
+Typography is PART OF THE VISUAL.
+NOT floating text.
+Preferred composition:
+
+asymmetrical editorial layout
+premium left-aligned composition
+strong visual balance
+stacked text hierarchy
+elegant breathing room
+premium spacing rhythm
+Allow:
+
+soft glassmorphism text panel
+gradient typography container
+subtle divider lines
+premium fintech visual accents
+Avoid:
+
+centered generic typography
+Canva-style layout
+cramped spacing
+random placement
+Typography aesthetic:
+Apple campaign
+×
+premium fintech advertising
+×
+editorial magazine poster
+━━━━━━━━━━━━━━━━━━━━━━
+🧠 HEADLINE TYPOGRAPHY LOCK
+━━━━━━━━━━━━━━━━━━━━━━
+IMPORTANT:
+ALL MAIN HEADLINES MUST USE:
+Roboto Sans Serif Typography
+Preferred styles:
+
+Roboto Bold
+Roboto Black
+Roboto Condensed Bold
+Roboto Condensed Black
+Headline characteristics:
+
+bold
+premium
+highly readable
+scroll-stopping
+visually dominant
+Typography treatment:
+
+white + green contrast
+selected keywords highlighted using #4fc58c
+subtle shadow depth
+premium readability
+Typography should feel:
+confident,
+modern,
+premium,
+brand-consistent.
+Never:
+
+serif fonts
+decorative fonts
+thin headline weights
+playful typography
+━━━━━━━━━━━━━━━━━━━━━━
+TEXT HIERARCHY
+━━━━━━━━━━━━━━━━━━━━━━
+MAIN HEADLINE:
+{{headline}}
+SUPPORT TEXT:
+{{support_text}}
+CTA:
+{{cta}}
+Rules:
+Main headline:
+
+strongest hierarchy
+readable in 1 second
+emotionally aligned
+Support text:
+
+concise
+reinforcing message
+CTA:
+
+short
+action-based
+maximum 3–5 words
+━━━━━━━━━━━━━━━━━━━━━━
+🏢 BRANDING SYSTEM
+━━━━━━━━━━━━━━━━━━━━━━
+
+subtle Arus.id logo placement
+premium minimal branding
+elegant watermark optional
+reserved logo area
+Should feel:
+trustworthy,
+premium,
+modern fintech brand.
+━━━━━━━━━━━━━━━━━━━━━━
+📐 TECHNICAL OUTPUT
+━━━━━━━━━━━━━━━━━━━━━━
+Aspect Ratio:
+3:4
+Recommended Size:
+1200 × 1600 px
+Requirements:
+
+Instagram ready
+LinkedIn ready
+high resolution
+print-ready quality
+typography-safe margins
+━━━━━━━━━━━━━━━━━━━━━━
+📱 CONTEXTUAL HERO OBJECT SYSTEM
+(SMART ADAPTIVE LOGIC)
+━━━━━━━━━━━━━━━━━━━━━━
+IMPORTANT:
+Hero objects must adapt to:
+MAIN HEADLINE
++
+CAMPAIGN CONTEXT
++
+EMOTIONAL STORY
+The system should automatically decide:
+Which visual object best strengthens the emotional story.
+━━━━━━━━━━━━━━━━━━━━━━
+OBJECT SELECTION LOGIC
+━━━━━━━━━━━━━━━━━━━━━━
+IF headline relates to:
+Financial stress
+Salary anxiety
+Money pressure
+Cashflow issues
+Salary access
+Financial education
+Employee finance
+→ SMARTPHONE MODE ACTIVATED
+Include:
+
+smartphone as secondary hero object
+fintech UI
+notification cards
+salary/payment reminder
+subtle fintech glow
+The smartphone should feel:
+emotionally relevant,
+story-driven,
+natural.
+NOT forced.
+━━━━━━━━━━━━━━━━━━━━━━
+IF headline relates to:
+Workplace wellness
+Company culture
+Employee wellbeing
+Professional growth
+Workplace safety
+HR initiatives
+Employee benefits
+→ HUMAN INTERACTION MODE
+Prefer:
+
+office environment
+laptop
+teamwork
+subtle HR/workplace UI
+professional atmosphere
+Avoid unnecessary smartphone dominance.
+━━━━━━━━━━━━━━━━━━━━━━
+IF headline relates to:
+Productivity
+Career growth
+Work performance
+→ WORKSPACE MODE
+Prefer:
+
+laptop
+workspace
+desk environment
+subtle productivity cues
+calendar/task overlays
+━━━━━━━━━━━━━━━━━━━━━━
+FINTECH UI RULE
+━━━━━━━━━━━━━━━━━━━━━━
+Only use floating fintech UI
+when contextually relevant.
+When relevant:
+
+premium glassmorphism UI
+floating cards
+subtle glow
+smartphone UI
+fintech dashboard fragments
+When not relevant:
+Use only subtle supporting UI.
+Never force fintech app visuals.
+━━━━━━━━━━━━━━━━━━━━━━
+🏆 FINAL QUALITY STANDARD
+━━━━━━━━━━━━━━━━━━━━━━
+Every output must feel:
+PREMIUM
+not template-looking
+EMOTIONAL
+not corporate stock
+HUMAN
+not robotic AI
+CINEMATIC
+not flat poster
+EDITORIAL
+not cluttered
+SCROLL-STOPPING
+strong first impression
+RELATABLE
+emotionally real
+POLISHED
+campaign-grade quality`;
+
+        // NEW MASTER CAROUSEL SYSTEM v4.1 (LOCK-SPECIFIED)
+        const DEFAULT_CAROUSEL_PROMPT = `MASTER CAROUSEL PROMPT SYSTEM V4.1
+Premium Fintech Editorial Carousel Engine
+(Individual Slide Generation | Dynamic UI Layers & Multi-Scenario Light | Gemini Optimized)
+━━━━━━━━━━━━━━━━━━━━━━
+🎯 ROLE
+━━━━━━━━━━━━━━━━━━━━━━
+You are a world-class advertising creative director specializing in:
+premium fintech lifestyle campaigns
+reverse-hook emotional storytelling
+editorial carousel advertising
+cinematic fintech visuals with dynamic volumetric UI layout
+high-performing social media campaigns
+Your task is to generate a: PREMIUM 5-SLIDE CAROUSEL CAMPAIGN for Arus.id.
+The final result should feel like: “A premium fintech story unfolding slide by slide, shifting fluidly between different urban professional spaces, layered depths, and lighting extremes.”
+Think: Netflix documentary × Apple campaign × Stripe advertising.
+NOT: Canva template, infographic-heavy slides, random visual direction, inconsistent layouts, corporate stock-photo aesthetic.
+━━━━━━━━━━━━━━━━━━━━━━
+⚙️ INPUT VARIABLES
+(ONLY CHANGE THIS SECTION)
+━━━━━━━━━━━━━━━━━━━━━━
+BRAND: Arus.id
+━━━━━━━━━━━━━━━━━━━━━━
+GLOBAL CAROUSEL VARIABLES
+━━━━━━━━━━━━━━━━━━━━━━
+MAIN HEADLINE: {{CAROUSEL_HEADLINE}}
+CAMPAIGN CONTEXT: {{CAROUSEL_CONTEXT}}
+EMOTION CORE: {{CAROUSEL_EMOTION}}
+SUPPORT TEXT: {{CAROUSEL_SUPPORT}}
+CTA: {{CAROUSEL_CTA}}
+━━━━━━━━━━━━━━━━━━━━━━
+OPTIONAL SLIDE OVERRIDE VARIABLES
+(LEAVE EMPTY FOR AUTO GENERATION)
+━━━━━━━━━━━━━━━━━━━━━━
+SLIDE 1 HEADLINE: {{SLIDE1_HEADLINE}} / SUPPORT: {{SLIDE1_SUPPORT}}
+SLIDE 2 HEADLINE: {{SLIDE2_HEADLINE}} / SUPPORT: {{SLIDE2_SUPPORT}}
+SLIDE 3 HEADLINE: {{SLIDE3_HEADLINE}} / SUPPORT: {{SLIDE3_SUPPORT}}
+SLIDE 4 HEADLINE: {{SLIDE4_HEADLINE}} / SUPPORT: {{SLIDE4_SUPPORT}}
+SLIDE 5 HEADLINE: {{SLIDE5_HEADLINE}} / SUPPORT: {{SLIDE5_SUPPORT}}
+━━━━━━━━━━━━━━━━━━━━━━
+🧠 CORE CAROUSEL & INDIVIDUAL SLIDE PRINCIPLE
+━━━━━━━━━━━━━━━━━━━━━━
+⚠️ STRICT RULE 1: ONE CAROUSEL = ONE STORY
+The carousel must feel cohesive, cinematic, emotionally progressive, and premium. Every slide must feel like part of ONE campaign with a consistent Visual DNA, NOT 5 different unrelated posters.
+⚠️ STRICT RULE 2: INDIVIDUAL IMAGE ISOLATION
+DO NOT combine, stitch, or merge the 5 slides into a single image grid or collage. Every slide must be treated as a standalone individual 3:4 canvas. You must provide a separate, dedicated "IMAGE GENERATION PROMPT" for each slide, ensuring they can be generated one by one independently while maintaining visual consistency.
+━━━━━━━━━━━━━━━━━━━━━━
+🧍 MULTI-SCENARIO HERO FRAMEWORK (ANTI-TEMPLATE)
+━━━━━━━━━━━━━━━━━━━━━━
+To avoid a repetitive "template look", the prompt generator must dynamically choose or rotate between ONE of these scenarios per campaign, or mix them fluidly based on the slide arc.
+Hero Profile: 20s–30s modern Indonesian professional, urban lifestyle. Expressions must look authentic and naturally implied (NO fake stock-photo smiles or crying).
+
+Scenario A (The Solo Professional): Hero working in a premium minimalist office desk, cafe window seat, or corporate lounge.
+Scenario B (The Dynamic Team / Collaborative): Hero in a medium/wide shot with 2-3 colleague silhouettes in the blurred background, capturing an active modern workplace environment.
+Scenario C (The Urban Commuter): Hero in a semi-outdoor modern urban transit area, premium office lobby entrance, or glass-walled skybridge overlooking the Jakarta skyline.
+━━━━━━━━━━━━━━━━━━━━━━
+📱 DYNAMIC DOUBLE-LAYER UI POSITIONING
+━━━━━━━━━━━━━━━━━━━━━━
+To break any structured template pattern, DO NOT use the exact same UI depth layout on every slide. For each slide, randomly combine exactly 2 to 3 volumetric glassmorphic elements across changing depths:
+
+Combination Option 1: Foreground (Heavy Bokeh) + Midground (In Focus)
+Combination Option 2: Midground (In Focus) + Background (Soft Fade)
+Combination Option 3: Foreground (Heavy Bokeh) + Background (Soft Fade)
+⚠️ UI MATERIAL LOCK: All floating elements must use ultra-premium glassmorphism (frosted translucent glass texture, fine light refractions on the edges, soft rounded corners). They must look like volumetric light projections integrated into the real room atmosphere, NOT flat 2D vector graphic stickers.
+━━━━━━━━━━━━━━━━━━━━━━
+💚 ARUS.ID BRAND VISUAL SYSTEM
+━━━━━━━━━━━━━━━━━━━━━━
+Brand Colors:
+
+Primary Green: #4fc58c
+Dark Green: #1b4c4a
+Color Application Rule:
+
+Dark Green (#1b4c4a) is used for background depth, premium cinematic shadows, dark gradients, and sophisticated contrast.
+Primary Green (#4fc58c) is used for text highlights, precise UI borders, and ambient light emission.
+The overall tone should always look like Stripe × Apple branding. NEVER use oversaturated neon cyberpunk or boring corporate flat layouts.
+━━━━━━━━━━━━━━━━━━━━━━
+🎬 DYNAMIC 5-SLIDE STORY ENGINE & AMBIENT REACTIVE LIGHTING
+━━━━━━━━━━━━━━━━━━━━━━
+Instead of using a rigid plot structure, the lighting, mood, and visual depth of EACH slide must DYNAMICALLY adapt to the semantic emotion of that specific slide's Headline and Support Text.
+🟢 STATE A: THE WIN / THE SOLUTION / ASPIRATIONAL (Happy, Relieved, Confident, Clear)
+
+Lighting Mood: HIGHLY ILLUMINATED & CRISP WHITE SUNLIGHT. Clean premium white tones dominate the scene. Infuse cinematic warm sun rays or intentional lens flares casting into a bright, airy minimalist space.
+Brand & UI Integration: Crispy Primary Green (#4fc58c) subtle edge glow/backlight cast onto the floating glass panels. Light from the UI screen softly reflects onto the hero’s confident, relaxed face. Dark Green (#1b4c4a) is restricted only to deep shadow core contrast areas.
+UI Content Focus: Clear data, rising green charts, success checkmarks, streamlined financial metrics.
+🔴 STATE B: THE CHALLENGE / THE PRESSURE / CONTEXT (Stressed, Anxious, Confused, Focused, Moody)
+
+Lighting Mood: HIGH-CONTRAST & MOODY CINEMATIC SHADOWS. Darker, richer tones to emphasize tension, deep focus, or cognitive fatigue. Deep #1b4c4a shadow layering with muted, realistic environmental textures. Think premium neo-noir business district aesthetic.
+Brand & UI Integration: The scene is dominated by sophisticated Dark Green shadows. Primary Green (#4fc58c) is used strictly for low-emission glowing UI borders or warning indicators slicing through the dark.
+UI Content Focus: Tension-driven fragments (bill countdowns, complex pending data, fluctuating curves, critical indicators).
+⚠️ STRICT RULE FOR OUTPUT: You are completely free to sequence these states randomly or follow the flow of the inputs. DO NOT force a fixed reverse-hook narrative if the headlines do not match it. Let the text dictate the lights.
+━━━━━━━━━━━━━━━━━━━━━━
+🧠 TYPOGRAPHY COMPOSITION ENGINE
+━━━━━━━━━━━━━━━━━━━━━━
+Typography is an integrated design element, left-aligned, stacked hierarchy, elegant tracking/kerning, and plenty of visual breathing room.
+
+Font Lock: Roboto Sans Serif (Roboto Bold / Roboto Black / Roboto Condensed Black).
+Treatment: White as base, with selected key phrases highlighted using Primary Green (#4fc58c) for maximum brand impact.
+━━━━━━━━━━━━━━━━━━━━━━
+🏢 BRANDING SYSTEM
+━━━━━━━━━━━━━━━━━━━━━━
+Include a subtle Arus.id logo/minimal watermark in the clean footer area of every slide. It must feel premium, trustworthy, and completely non-intrusive.
+━━━━━━━━━━━━━━━━━━━━━━
+📐 OUTPUT FORMAT (INDIVIDUAL SLIDE SEPARATION)
+━━━━━━━━━━━━━━━━━━━━━━
+Generate a complete, sequential breakdown for 5 distinct individual slides, formatted separately so they can be processed one image at a time. Aspect Ratio for each image: 3:4 (1200 × 1600 px).
+For EACH slide, you must output exactly this structure:
+
+🔳 SLIDE [NUMBER]
+Exact Emotional Tone & State: [State A or State B + specific emotion]
+Copywriting:
+Headline: [Text]
+Support Text: [Text]
+Typography Layout: [Specify which words are colored in #4fc58c, left-aligned placement]
+Visual Environment & Framing: [Specify Scenario A, B, or C; camera angle, character framing, precise facial expression, and location details]
+Dynamic Multi-Layer UI Layout Breakdown:
+Chosen Combination Depth: [e.g., Foreground + Midground]
+Layer 1 (Foreground/Midground): [Details of glassmorphic elements, blur level]
+Layer 2 (Midground/Background): [Details of glassmorphic screens in focus]
+Precise Lighting & Color Directions: [Detailed instructions for the lighting blueprint]
+🚨 INDIVIDUAL IMAGE GENERATION PROMPT:
+[Write a highly-detailed, standalone image generation prompt here. Include aspect ratio 3:4, camera shot type, lighting style, environment, cinematic details, color palette (#1b4c4a and #4fc58c), ultra-premium glassmorphism UI elements, and the text overlay instructions so it can be copied directly to generate this single specific slide image alone.]
+━━━━━━━━━━━━━━━━━━━━━━
+🏆 FINAL QUALITY STANDARD
+━━━━━━━━━━━━━━━━━━━━━━
+Every individual slide must feel: PREMIUM, EMOTIONAL, CINEMATIC, EDITORIAL, SCROLL-STOPPING, HIGH-CONVERSION, and BRAND CONSISTENT. Most importantly, ensure that when generated one by one, they all look like they belong to the exact same cinematic campaign family.`;
+
+        // ACTIVE DYNAMIC MUTABLE MASTER TEMPLATES
+        let POSTER_MASTER_PROMPT_TEMPLATE = "";
+        let CAROUSEL_MASTER_PROMPT_TEMPLATE = "";
+
+        // STREAMING_CHUNK: Declaring system state variables and form input models...
+        // SYSTEM DATA STATE (MODELS)
+        let currentEngineMode = 'poster'; // 'poster' or 'carousel'
+        let activePromptTab = 'master';    // 'master' or 'imagen'
+        let activeSidebarTab = 'tabContent'; // 'tabContent' or 'tabDesign'
+        
+        let carouselActiveIndex = 0; // 0 to 4 (Slide 1 to 5)
+
+        // INPUT DATA WITH UPGRADED GLOBAL CAROUSEL PARAMETERS (v5.3 PRO)
+        let formInputs = {
+            headline: "Kerja Keras Saja Tidak Cukup Tanpa Kepastian Finansial",
+            highlight: "Kepastian Finansial",
+            support: "Akses gaji instan kapan saja tanpa beban bunga tinggi.",
+            cta: "Tarik Gaji Hari Ini",
+            emotion: "stress",
+            context: "financial wellbeing",
+            heroMode: "SMARTPHONE",
+            typography: "bold fintech",
+            
+            heroConfig: "CONFIGURATION A: INDIVIDUAL HERO (1 Person)",
+            teamMoodDir: "NOT APPLICABLE: - (Only use this if Configuration A is selected)",
+            bgMood: "STRESS / PRESSURE: Slightly messy workspace, unfinished work, dim cinematic lighting, realistic subtle clutter on desks, casting signs of mental pressure.",
+            
+            // Carousel Global Variable Fields (V5.3 Request)
+            carouselHeadline: "Kesejahteraan Finansial Karyawan Adalah Kunci Utama Produktivitas",
+            carouselHighlight: "Kesejahteraan Finansial",
+            carouselSupport: "Berikan akses gaji fleksibel kapan saja untuk membantu arus kas harian tim Anda tanpa beban bunga tinggi.",
+            carouselCta: "Coba Arus.id Sekarang",
+            
+            // Slide Contents Data (WYSIWYG overrides)
+            carouselSlides: [
+                { headline: "Gaji Habis Tengah Bulan Padahal Kerja Lembur?", support: "Menunggu hari gajian terasa sangat lama ketika kebutuhan mendesak mendatangi hidup Anda tanpa diundang." },
+                { headline: "Stres Finansial Diam-Dim Menguras Produktivitas Anda", support: "Beban pikiran tagihan bulanan menurunkan performa kerja di kantor." },
+                { headline: "Arus.id: Kepastian Finansial Di Tangan Anda", support: "Akses gaji yang sudah Anda usahakan setiap hari secara fleksibel." },
+                { headline: "Kembalikan Kendali Hidup Tanpa Beban Hutang", support: "Akses gaji instan yang ramah tanpa bunga tinggi." },
+                { headline: "Mulai Hari Kerja yang Produktif Bersama Arus.id", support: "Fokus ke performa karir dengan jaminan kesejahteraan yang tenang." }
+            ]
+        };
+
+        // DESIGN CONTROLS VALUES
+        let designSettings = {
+            headlineSize: 34,
+            supportSize: 14,
+            layoutY: 70,
+            blurIntensity: 12,
+            logoAlign: 'left',
+            mockupPhoto: 'corporate-stress'
+        };
+
+        // MOCKUP PHOTO REPOSITORY
+        const PHOTO_REPO = {
+            'corporate-stress': 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=800',
+            'modern-office': 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=800',
+            'jakarta-commuter': 'https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&q=80&w=800'
+        };
+
+        // STREAMING_CHUNK: Initializing onloaded components and syncing forms...
+        // INITIALIZE APPLICATION
+        window.onload = function() {
+            initThemeFromDatabase();
+            loadSavedHistoryFromStorage();
+            
+            // Load base Master Prompt templates (with custom overrides if available)
+            POSTER_MASTER_PROMPT_TEMPLATE = SafeStorage.getItem('custom_poster_template_v52') || DEFAULT_POSTER_PROMPT;
+            CAROUSEL_MASTER_PROMPT_TEMPLATE = SafeStorage.getItem('custom_carousel_template_v53') || DEFAULT_CAROUSEL_PROMPT;
+
+            // Initialize forms
+            syncFormInputsFromData();
+            updateLivePromptCenter();
+            syncPreviewText();
+        };
+
+        function initThemeFromDatabase() {
+            const savedTheme = SafeStorage.getItem('theme_engine') || 'dark';
+            if (savedTheme === 'dark') {
+                document.documentElement.classList.add('dark');
+                document.getElementById('themeIconSun').classList.remove('hidden');
+                document.getElementById('themeIconMoon').classList.add('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('themeIconSun').classList.add('hidden');
+                document.getElementById('themeIconMoon').classList.remove('hidden');
+            }
+        }
+
+        // STREAMING_CHUNK: Managing system engine toggle and form interface views...
+        // SET CAMPAIGN ENGINE MODE (POSTER VS CAROUSEL)
+        function setEngineMode(mode) {
+            currentEngineMode = mode;
+            
+            const btnPoster = document.getElementById('modeBtnPoster');
+            const btnCarousel = document.getElementById('modeBtnCarousel');
+            const badge = document.getElementById('badgeCurrentMode');
+            const posterInputGroup = document.getElementById('inputsPosterGroup');
+            const carouselInputGroup = document.getElementById('inputsCarouselGroup');
+            
+            const carouselPageBadge = document.getElementById('carouselPageBadge');
+            const carouselFooter = document.getElementById('carouselControlFooter');
+            
+            if (mode === 'poster') {
+                // UI Button Styling toggle
+                btnPoster.className = "flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-300 bg-white dark:bg-brand-primary text-brand-dark dark:text-brand-obsidian shadow";
+                btnCarousel.className = "flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-300 text-slate-500 dark:text-gray-400 hover:text-slate-800 dark:hover:text-white";
+                
+                badge.innerText = "POSTER MODE";
+                badge.className = "text-[10px] bg-brand-primary/10 text-brand-primary px-2.5 py-0.5 rounded-full font-bold";
+                
+                posterInputGroup.classList.remove('hidden');
+                carouselInputGroup.classList.add('hidden');
+                
+                carouselPageBadge.classList.add('hidden');
+                carouselFooter.classList.add('hidden');
+            } else {
+                btnPoster.className = "flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-300 text-slate-500 dark:text-gray-400 hover:text-slate-800 dark:hover:text-white";
+                btnCarousel.className = "flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-300 bg-white dark:bg-brand-primary text-brand-dark dark:text-brand-obsidian shadow";
+                
+                badge.innerText = "5-SLIDE CAROUSEL";
+                badge.className = "text-[10px] bg-blue-500/10 text-blue-400 px-2.5 py-0.5 rounded-full font-bold border border-blue-500/20";
+                
+                posterInputGroup.classList.add('hidden');
+                carouselInputGroup.classList.remove('hidden');
+                
+                carouselPageBadge.classList.remove('hidden');
+                carouselFooter.classList.remove('hidden');
+                
+                // Trigger sub-tabs updates
+                syncCarouselPreview();
+            }
+            
+            updateLivePromptCenter();
+            syncPreviewText();
+        }
+
+        // SINKRONISASI TAB MULTIPEL SIDEBAR
+        function switchSidebarTab(tabId) {
+            activeSidebarTab = tabId;
+            const btnContent = document.getElementById('sidebarTabContent');
+            const btnDesign = document.getElementById('sidebarTabDesign');
+            const wrapContent = document.getElementById('sidebarContentWrapper');
+            const wrapDesign = document.getElementById('sidebarDesignWrapper');
+
+            if (tabId === 'tabContent') {
+                btnContent.className = "flex-1 pb-3 text-sm font-bold border-b-2 border-brand-primary text-brand-primary flex items-center justify-center gap-2 transition";
+                btnDesign.className = "flex-1 pb-3 text-sm font-semibold border-b-2 border-transparent text-slate-500 dark:text-gray-400 hover:text-slate-800 dark:hover:text-white flex items-center justify-center gap-2 transition";
+                wrapContent.classList.remove('hidden');
+                wrapDesign.classList.add('hidden');
+            } else {
+                btnDesign.className = "flex-1 pb-3 text-sm font-bold border-b-2 border-brand-primary text-brand-primary flex items-center justify-center gap-2 transition";
+                btnContent.className = "flex-1 pb-3 text-sm font-semibold border-b-2 border-transparent text-slate-500 dark:text-gray-400 hover:text-slate-800 dark:hover:text-white flex items-center justify-center gap-2 transition";
+                wrapContent.classList.add('hidden');
+                wrapDesign.classList.remove('hidden');
+            }
+        }
+
+        // STREAMING_CHUNK: Synchronizing slider navigation and bidirectional WYSIWYG bindings...
+        // CAROUSEL SLIDE SELECTION NAVIGATION
+        function setSlideIndex(index) {
+            if (index < 0 || index > 4) return;
+            carouselActiveIndex = index;
+            
+            // Sync Left sub-tabs visual classes
+            for (let i = 0; i < 5; i++) {
+                const tab = document.getElementById(`subTabSlide${i}`);
+                if (i === index) {
+                    tab.className = "flex-1 py-1.5 text-[10px] font-bold rounded-lg transition-all duration-300 bg-brand-primary text-brand-obsidian";
+                } else {
+                    tab.className = "flex-1 py-1.5 text-[10px] font-semibold rounded-lg text-slate-500 dark:text-gray-400 hover:text-slate-800";
+                }
+            }
+            
+            syncCarouselPreview();
+        }
+
+        function syncCarouselPreview() {
+            // Update labels editor
+            document.getElementById('lblSlideEditorHeadline').innerText = `Slide ${carouselActiveIndex + 1} Headline`;
+            document.getElementById('lblSlideEditorSupport').innerText = `Slide ${carouselActiveIndex + 1} Support Text`;
+            
+            // Set inputs fields value
+            const currentSlide = formInputs.carouselSlides[carouselActiveIndex];
+            document.getElementById('carouselSlideHeadline').value = currentSlide.headline;
+            document.getElementById('carouselSlideSupport').value = currentSlide.support;
+            
+            // Pagination status
+            document.getElementById('carouselPageBadge').innerText = `SLIDE ${carouselActiveIndex + 1} OF 5`;
+            
+            // Update Slider Dots
+            for (let i = 0; i < 5; i++) {
+                const dot = document.getElementById(`carouselDot${i}`);
+                if (i === carouselActiveIndex) {
+                    dot.className = "w-4 h-2 rounded-full bg-brand-primary transition-all duration-300";
+                } else {
+                    dot.className = "w-2 h-2 rounded-full bg-slate-600 transition-all duration-300";
+                }
+            }
+            
+            // Handle Ambient Reactive Lighting Layout Style (State A (1,4,5) vs State B (2,3))
+            const bgPhoto = document.getElementById('mockupBackgroundPhoto');
+            const ambientTint = document.getElementById('ambientGradientTint');
+            const floatingCard = document.getElementById('floatingPhoneAlert');
+            
+            if (carouselActiveIndex === 0 || carouselActiveIndex === 3 || carouselActiveIndex === 4) {
+                // STATE A: Crisp bright white sunlight
+                bgPhoto.style.filter = "brightness(0.95) contrast(1.02)";
+                ambientTint.className = "absolute inset-0 bg-gradient-to-t from-white/90 via-white/40 to-transparent mix-blend-overlay opacity-80 transition-all duration-500";
+                
+                if (floatingCard) {
+                    floatingCard.className = "absolute bottom-1/3 left-6 right-6 p-4 rounded-2xl bg-brand-dark/10 backdrop-blur-md border border-brand-primary/40 shadow-2xl transition-all duration-500 max-w-[260px]";
+                }
+            } else {
+                // STATE B: Moody high contrast darkness
+                bgPhoto.style.filter = "brightness(0.6) contrast(1.1)";
+                ambientTint.className = "absolute inset-0 bg-gradient-to-t from-brand-dark/95 via-brand-dark/65 to-transparent mix-blend-multiply opacity-90 transition-all duration-500";
+                
+                if (floatingCard) {
+                    floatingCard.className = "absolute bottom-1/3 left-6 right-6 p-4 rounded-2xl bg-brand-obsidian/45 backdrop-blur-md border border-white/20 shadow-2xl transition-all duration-500 max-w-[260px]";
+                }
+            }
+            
+            // Sync visual typography values
+            syncPreviewText();
+        }
+
+        function updateCarouselSlideText() {
+            const headlineVal = document.getElementById('carouselSlideHeadline').value;
+            const supportVal = document.getElementById('carouselSlideSupport').value;
+            
+            formInputs.carouselSlides[carouselActiveIndex].headline = headlineVal;
+            formInputs.carouselSlides[carouselActiveIndex].support = supportVal;
+            
+            syncPreviewText();
+            updateLivePromptCenter();
+        }
+
+        // STREAMING_CHUNK: Restoring state values into input fields...
+        // SINKRONISASI DATA FROM SCRIPT INTO HTML FORM FIELDS
+        function syncFormInputsFromData() {
+            document.getElementById('headlineInput').value = formInputs.headline;
+            document.getElementById('highlightInput').value = formInputs.highlight;
+            document.getElementById('supportInput').value = formInputs.support;
+            document.getElementById('ctaInput').value = formInputs.cta;
+            document.getElementById('emotionSelect').value = formInputs.emotion;
+            document.getElementById('contextSelect').value = formInputs.context;
+            document.getElementById('heroModeSelect').value = formInputs.heroMode;
+            document.getElementById('typoSelect').value = formInputs.typography;
+            
+            document.getElementById('heroConfigSelect').value = formInputs.heroConfig;
+            document.getElementById('teamMoodDirSelect').value = formInputs.teamMoodDir;
+            document.getElementById('bgMoodSelect').value = formInputs.bgMood;
+            
+            // Synchronize Upgraded Global Carousel variables (v5.3 PRO)
+            document.getElementById('carouselGlobalHeadline').value = formInputs.carouselHeadline;
+            document.getElementById('carouselGlobalHighlight').value = formInputs.carouselHighlight;
+            document.getElementById('carouselGlobalSupport').value = formInputs.carouselSupport;
+            document.getElementById('carouselGlobalCta').value = formInputs.carouselCta;
+        }
+
+        // STREAMING_CHUNK: Processing changes on inputs and managing smart field lockouts...
+        // DETECT COPY CONTROLS INPUT FIELD CHANGE FOR RENDERS
+        function handleCopyInputChange() {
+            formInputs.headline = document.getElementById('headlineInput').value;
+            formInputs.highlight = document.getElementById('highlightInput').value;
+            formInputs.support = document.getElementById('supportInput').value;
+            formInputs.cta = document.getElementById('ctaInput').value;
+            formInputs.emotion = document.getElementById('emotionSelect').value;
+            formInputs.context = document.getElementById('contextSelect').value;
+            formInputs.heroMode = document.getElementById('heroModeSelect').value;
+            formInputs.typography = document.getElementById('typoSelect').value;
+            
+            formInputs.heroConfig = document.getElementById('heroConfigSelect').value;
+            formInputs.teamMoodDir = document.getElementById('teamMoodDirSelect').value;
+            formInputs.bgMood = document.getElementById('bgMoodSelect').value;
+
+            // Capture Upgraded Global Carousel variables (v5.3 PRO)
+            formInputs.carouselHeadline = document.getElementById('carouselGlobalHeadline').value;
+            formInputs.carouselHighlight = document.getElementById('carouselGlobalHighlight').value;
+            formInputs.carouselSupport = document.getElementById('carouselGlobalSupport').value;
+            formInputs.carouselCta = document.getElementById('carouselGlobalCta').value;
+
+            // Smart Auto-Toggle: If config A is selected, strictly lock Team Mood to Not Applicable
+            if (formInputs.heroConfig.includes("CONFIGURATION A")) {
+                document.getElementById('teamMoodDirSelect').value = "NOT APPLICABLE: - (Only use this if Configuration A is selected)";
+                document.getElementById('teamMoodDirSelect').disabled = true;
+                formInputs.teamMoodDir = "NOT APPLICABLE: - (Only use this if Configuration A is selected)";
+            } else {
+                document.getElementById('teamMoodDirSelect').disabled = false;
+                if (formInputs.teamMoodDir.includes("NOT APPLICABLE")) {
+                    document.getElementById('teamMoodDirSelect').value = "STRESS & ANXIETY CONTEXT: A modern tech-office room where 3-4 team members look visibly quiet, mentally overloaded, and distracted; one is rubbing their temples, another staring blankly at a laptop screen, capturing a unified atmosphere of subtle workplace pressure.";
+                    formInputs.teamMoodDir = "STRESS & ANXIETY CONTEXT: A modern tech-office room where 3-4 team members look visibly quiet, mentally overloaded, and distracted; one is rubbing their temples, another staring blankly at a laptop screen, capturing a unified atmosphere of subtle workplace pressure.";
+                }
+            }
+            
+            syncPreviewText();
+            updateLivePromptCenter();
+        }
+
+        // STREAMING_CHUNK: Injecting live typography and highlights into visual preview frame...
+        // INTERACTIVE LIVE TEXT INJECTION VISUAL PREVIEW
+        function syncPreviewText() {
+            let activeHeadline = "";
+            let activeSupport = "";
+            let activeCta = "";
+            let activeHighlight = "";
+            
+            if (currentEngineMode === 'poster') {
+                activeHeadline = formInputs.headline;
+                activeSupport = formInputs.support;
+                activeCta = formInputs.cta;
+                activeHighlight = formInputs.highlight;
+                
+                // Show smartphone floating alert based on hero mode
+                const floatCard = document.getElementById('floatingPhoneAlert');
+                if (formInputs.heroMode === 'SMARTPHONE') {
+                    floatCard.style.opacity = '1';
+                    floatCard.style.transform = 'scale(1)';
+                } else {
+                    floatCard.style.opacity = '0';
+                    floatCard.style.transform = 'scale(0.8)';
+                }
+            } else {
+                const currentSlide = formInputs.carouselSlides[carouselActiveIndex];
+                activeHeadline = currentSlide.headline;
+                activeSupport = currentSlide.support;
+                activeCta = formInputs.carouselCta;
+                activeHighlight = formInputs.carouselHighlight;
+                
+                // Always show smartphone UI floating nicely for carousel visual depth representation
+                document.getElementById('floatingPhoneAlert').style.opacity = '1';
+                document.getElementById('floatingPhoneAlert').style.transform = 'scale(0.95)';
+            }
+            
+            const hlNode = document.getElementById('previewHeadline');
+            const supNode = document.getElementById('previewSupportText');
+            const ctaNode = document.getElementById('previewCta');
+            
+            // Build regex for highlighting keyword nicely in brand accent
+            if (activeHighlight && activeHeadline.toLowerCase().includes(activeHighlight.toLowerCase())) {
+                const regex = new RegExp(`(${escapeRegExp(activeHighlight)})`, 'gi');
+                hlNode.innerHTML = activeHeadline.replace(regex, `<span class="text-brand-primary">$1</span>`);
+            } else {
+                hlNode.innerText = activeHeadline;
+            }
+            
+            supNode.innerText = activeSupport;
+            ctaNode.innerText = activeCta;
+        }
+
+        function escapeRegExp(string) {
+            return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        }
+
+        // DESIGN CONTROLS ADJUSTMENTS SENSORS
+        function adjustDesignValue(prop, val) {
+            designSettings[prop] = val;
+            
+            if (prop === 'headlineSize') {
+                document.getElementById('valHeadlineSize').innerText = `${val}px`;
+                document.getElementById('previewHeadline').style.fontSize = `${val}px`;
+            } else if (prop === 'supportSize') {
+                document.getElementById('valSupportSize').innerText = `${val}px`;
+                document.getElementById('previewSupportText').style.fontSize = `${val}px`;
+            } else if (prop === 'layoutY') {
+                document.getElementById('valLayoutY').innerText = `${val}%`;
+                document.getElementById('customBackdropPanel').style.top = `${val}%`;
+            } else if (prop === 'blurIntensity') {
+                document.getElementById('valBlurIntensity').innerText = `${val}px`;
+                document.getElementById('customBackdropPanel').style.backdropFilter = `blur(${val}px)`;
+            } else if (prop === 'logoAlign') {
+                const btnLeft = document.getElementById('btnLogoLeft');
+                const btnCenter = document.getElementById('btnLogoCenter');
+                const btnRight = document.getElementById('btnLogoRight');
+                const logoContainer = document.getElementById('brandLogoContainer');
+                
+                btnLeft.className = "px-3 py-1.5 rounded-lg border text-xs font-semibold border-slate-200 dark:border-slate-700";
+                btnCenter.className = "px-3 py-1.5 rounded-lg border text-xs font-semibold border-slate-200 dark:border-slate-700";
+                btnRight.className = "px-3 py-1.5 rounded-lg border text-xs font-semibold border-slate-200 dark:border-slate-700";
+                
+                if (val === 'left') {
+                    btnLeft.className = "px-3 py-1.5 rounded-lg border border-brand-primary bg-brand-primary/10 text-brand-primary text-xs font-semibold";
+                    logoContainer.className = "flex items-center gap-1.5 mb-2 justify-start";
+                } else if (val === 'center') {
+                    btnCenter.className = "px-3 py-1.5 rounded-lg border border-brand-primary bg-brand-primary/10 text-brand-primary text-xs font-semibold";
+                    logoContainer.className = "flex items-center gap-1.5 mb-2 justify-center";
+                } else {
+                    btnRight.className = "px-3 py-1.5 rounded-lg border border-brand-primary bg-brand-primary/10 text-brand-primary text-xs font-semibold";
+                    logoContainer.className = "flex items-center gap-1.5 mb-2 justify-end";
+                }
+            } else if (prop === 'mockupPhoto') {
+                document.getElementById('mockupBackgroundPhoto').style.backgroundImage = `url('${PHOTO_REPO[val]}')`;
+            }
+        }
+
+        // STREAMING_CHUNK: Compiling prompt variables using split & join engine...
+        // COMPILE LIVE INTERACTIVE VARIABLES INTO PROMPTS (Using split/join for 100% replacement accuracy across all instances)
+        function updateLivePromptCenter() {
+            let outputText = "";
+            
+            if (currentEngineMode === 'poster') {
+                if (activePromptTab === 'master') {
+                    let compiled = POSTER_MASTER_PROMPT_TEMPLATE;
+                    compiled = compiled.split('{{headline}}').join(`"${formInputs.headline}"`);
+                    compiled = compiled.split('{{support_text}}').join(`"${formInputs.support}"`);
+                    compiled = compiled.split('{{cta}}').join(`"${formInputs.cta}"`);
+                    compiled = compiled.split('{{emotion_core}}').join(formInputs.emotion.toUpperCase());
+                    compiled = compiled.split('{{campaign_context}}').join(formInputs.context.toUpperCase());
+                    compiled = compiled.split('{{typography_style}}').join(formInputs.typography.toUpperCase());
+                    compiled = compiled.split('{{hero_mode}}').join(formInputs.heroMode);
+                    
+                    compiled = compiled.split('{{selected_hero_configuration}}').join(formInputs.heroConfig);
+                    compiled = compiled.split('{{team_mood_direction}}').join(formInputs.teamMoodDir);
+                    compiled = compiled.split('{{background_mood}}').join(formInputs.bgMood);
+                    outputText = compiled;
+                } else {
+                    outputText = `Premium social media poster photo background for Arus.id fintech campaign.
+Visual Human Moment: ${formInputs.heroConfig}, set in an emotional environment of [EMOTION: ${formInputs.emotion.toUpperCase()}].
+Team Dynamic Context: ${formInputs.teamMoodDir}
+Background Atmosphere: ${formInputs.bgMood}
+Composition Direction: cinematic shot, shallow depth-of-field, asymmetric workspace framing, ultra-high dynamic range, 3:4 aspect ratio.
+Brand Color Accent: Muted neutrals and dark green tone background (#1b4c4a) with subtle emerald green highlights (#4fc58c) ambient lighting.`;
+                }
+            } else {
+                // v5.3 PRO: Compilation mapping to MASTER CAROUSEL PROMPT SYSTEM V4.1
+                if (activePromptTab === 'master') {
+                    let compiled = CAROUSEL_MASTER_PROMPT_TEMPLATE;
+                    
+                    // Global Variables
+                    compiled = compiled.split('{{CAROUSEL_HEADLINE}}').join(`"${formInputs.carouselHeadline}"`);
+                    compiled = compiled.split('{{CAROUSEL_CONTEXT}}').join(formInputs.context.toUpperCase());
+                    compiled = compiled.split('{{CAROUSEL_EMOTION}}').join(formInputs.emotion.toUpperCase());
+                    compiled = compiled.split('{{CAROUSEL_SUPPORT}}').join(`"${formInputs.carouselSupport}"`);
+                    compiled = compiled.split('{{CAROUSEL_CTA}}').join(`"${formInputs.carouselCta}"`);
+                    
+                    // Slide overrides mapping
+                    compiled = compiled.split('{{SLIDE1_HEADLINE}}').join(`"${formInputs.carouselSlides[0].headline}"`);
+                    compiled = compiled.split('{{SLIDE1_SUPPORT}}').join(`"${formInputs.carouselSlides[0].support}"`);
+                    compiled = compiled.split('{{SLIDE2_HEADLINE}}').join(`"${formInputs.carouselSlides[1].headline}"`);
+                    compiled = compiled.split('{{SLIDE2_SUPPORT}}').join(`"${formInputs.carouselSlides[1].support}"`);
+                    compiled = compiled.split('{{SLIDE3_HEADLINE}}').join(`"${formInputs.carouselSlides[2].headline}"`);
+                    compiled = compiled.split('{{SLIDE3_SUPPORT}}').join(`"${formInputs.carouselSlides[2].support}"`);
+                    compiled = compiled.split('{{SLIDE4_HEADLINE}}').join(`"${formInputs.carouselSlides[3].headline}"`);
+                    compiled = compiled.split('{{SLIDE4_SUPPORT}}').join(`"${formInputs.carouselSlides[3].support}"`);
+                    compiled = compiled.split('{{SLIDE5_HEADLINE}}').join(`"${formInputs.carouselSlides[4].headline}"`);
+                    compiled = compiled.split('{{SLIDE5_SUPPORT}}').join(`"${formInputs.carouselSlides[4].support}"`);
+                    
+                    outputText = compiled;
+                } else {
+                    outputText = `Premium 5-slide visual carousel asset background sequence for Arus.id campaign.
+Story Theme: Reverse financial breakthrough narrative of 1 urban Indonesian modern worker.
+Visual Arc (Slide 1-5):
+- Slide 1 (Aspirational): Crisp clear sunlight, hero standing in lobby.
+- Slide 2 (Challenge Stressed): Moody shadows, tired sitting, messy workspace.
+- Slide 3 (Challenge Focused): Low neon UI light, distracted by smartphone screen.
+- Slide 4 (Solution Clean): Clear morning rays, professional starting fresh.
+- Slide 5 (Resolution Victory): Joyful and relieved, walking in premium business environment.
+Technical constraints: Cinematic portrait frame, 3:4 aspect ratio, ultra-premium glassmorphism UI overlay components in focus.`;
+                }
+            }
+            
+            document.getElementById('livePromptArea').value = outputText;
+        }
+
+        // STREAMING_CHUNK: Safeguarding clipboard copies against iFrame sandboxes...
+        // UNIVERSAL COMPATIBLE ASYNC CLIPBOARD WRITER (iFrame Safe)
+        async function writeTextToClipboard(text) {
+            try {
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    await navigator.clipboard.writeText(text);
+                    return true;
+                }
+            } catch (err) {
+                console.warn("Modern clipboard API failed or blocked. Activating fallback engine...", err);
+            }
+            
+            try {
+                const tempTextArea = document.createElement('textarea');
+                tempTextArea.value = text;
+                tempTextArea.style.top = "0";
+                tempTextArea.style.left = "0";
+                tempTextArea.style.position = "fixed";
+                tempTextArea.style.opacity = "0";
+                document.body.appendChild(tempTextArea);
+                tempTextArea.focus();
+                tempTextArea.select();
+                const success = document.execCommand('copy');
+                document.body.removeChild(tempTextArea);
+                return success;
+            } catch (fallbackErr) {
+                console.error("Fallback clipboard engine failed:", fallbackErr);
+                return false;
+            }
+        }
+
+        // CUSTOM MASTER SYSTEM PROMPT EDITOR LOGIC
+        function openTemplateEditorModal() {
+            document.getElementById('templateEditModal').classList.remove('hidden');
+            document.getElementById('editTemplateSelector').value = currentEngineMode;
+            loadTemplateToEditorTextarea();
+        }
+
+        function closeTemplateEditorModal() {
+            document.getElementById('templateEditModal').classList.add('hidden');
+        }
+
+        function loadTemplateToEditorTextarea() {
+            const mode = document.getElementById('editTemplateSelector').value;
+            const textarea = document.getElementById('templateEditorArea');
+            if (mode === 'poster') {
+                textarea.value = POSTER_MASTER_PROMPT_TEMPLATE;
+            } else {
+                textarea.value = CAROUSEL_MASTER_PROMPT_TEMPLATE;
+            }
+        }
+
+        // STREAMING_CHUNK: Saving custom compiled templates into Secure Storage...
+        function saveCustomTemplate() {
+            const mode = document.getElementById('editTemplateSelector').value;
+            const textValue = document.getElementById('templateEditorArea').value;
+
+            if (mode === 'poster') {
+                POSTER_MASTER_PROMPT_TEMPLATE = textValue;
+                SafeStorage.setItem('custom_poster_template_v52', textValue);
+            } else {
+                CAROUSEL_MASTER_PROMPT_TEMPLATE = textValue;
+                SafeStorage.setItem('custom_carousel_template_v53', textValue);
+            }
+
+            updateLivePromptCenter();
+            closeTemplateEditorModal();
+            showToastNotification("Base System Template Updated & Compiled!");
+        }
+
+        function resetSelectedTemplateToDefault() {
+            const mode = document.getElementById('editTemplateSelector').value;
+            if (confirm("Are you sure you want to restore this template to original default? Your custom changes will be deleted.")) {
+                if (mode === 'poster') {
+                    POSTER_MASTER_PROMPT_TEMPLATE = DEFAULT_POSTER_PROMPT;
+                    SafeStorage.removeItem('custom_poster_template_v52');
+                } else {
+                    CAROUSEL_MASTER_PROMPT_TEMPLATE = DEFAULT_CAROUSEL_PROMPT;
+                    SafeStorage.removeItem('custom_carousel_template_v53');
+                }
+                loadTemplateToEditorTextarea();
+                updateLivePromptCenter();
+                showToastNotification("Template Restored to Factory Defaults.");
+            }
+        }
+
+        function switchPromptTab(tab) {
+            activePromptTab = tab;
+            const btnMaster = document.getElementById('promptTabMaster');
+            const btnImagen = document.getElementById('promptTabImagen');
+            
+            btnMaster.className = "px-2.5 py-1 text-[10px] font-semibold rounded-md text-gray-400 hover:text-white";
+            btnImagen.className = "px-2.5 py-1 text-[10px] font-semibold rounded-md text-gray-400 hover:text-white";
+            
+            if (tab === 'master') {
+                btnMaster.className = "px-2.5 py-1 text-[10px] font-bold rounded-md bg-brand-primary text-brand-obsidian";
+            } else {
+                btnImagen.className = "px-2.5 py-1 text-[10px] font-bold rounded-md bg-brand-primary text-brand-obsidian";
+            }
+            
+            updateLivePromptCenter();
+        }
+
+        function handlePromptAreaInput() {
+            // Allows manual prompt customizations on Compiled Text Box
+        }
+
+        async function copyToClipboard() {
+            const promptArea = document.getElementById('livePromptArea');
+            const success = await writeTextToClipboard(promptArea.value);
+            if (success) {
+                showToastNotification("Prompt Copied to Clipboard Successfully!");
+            } else {
+                showToastNotification("Failed to copy. Please select and copy manually.");
+            }
+        }
+
+        function showToastNotification(message) {
+            const toast = document.getElementById('toastNotification');
+            const toastMsg = document.getElementById('toastMessage');
+            
+            toastMsg.innerText = message;
+            toast.className = "fixed bottom-6 right-6 bg-slate-900 border border-brand-primary/30 px-5 py-3.5 rounded-2xl shadow-2xl flex items-center gap-3 transform translate-y-0 opacity-100 transition-all duration-300 z-[100]";
+            
+            setTimeout(() => {
+                toast.className = "fixed bottom-6 right-6 bg-slate-900 border border-brand-primary/30 px-5 py-3.5 rounded-2xl shadow-2xl flex items-center gap-3 transform translate-y-24 opacity-0 transition-all duration-300 z-[100]";
+            }, 3000);
+        }
+
+        // STREAMING_CHUNK: Managing history logs database models and list rendering...
+        // RIWAYAT PENYIMPANAN LOGICAL ENGINE (LOCAL STORAGE LOGS)
+        let savedHistoryLogs = [];
+
+        function loadSavedHistoryFromStorage() {
+            const databaseKey = 'content_engine_history_logs_v53';
+            const rawData = SafeStorage.getItem(databaseKey);
+            if (rawData) {
+                try {
+                    savedHistoryLogs = JSON.parse(rawData);
+                } catch (e) {
+                    savedHistoryLogs = [];
+                }
+            }
+            renderHistoryLogsListUI();
+        }
+
+        function saveCurrentPromptToHistory() {
+            const currentPromptValue = document.getElementById('livePromptArea').value;
+            let descriptiveHeadline = "";
+            let categoryTag = formInputs.emotion.toUpperCase();
+
+            if (currentEngineMode === 'poster') {
+                descriptiveHeadline = formInputs.headline;
+            } else {
+                descriptiveHeadline = `Carousel: ${formInputs.carouselHeadline}`;
+            }
+
+            const newLogItem = {
+                id: Date.now(),
+                timestamp: new Date().toLocaleDateString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+                headline: descriptiveHeadline,
+                mode: currentEngineMode,
+                emotion: categoryTag,
+                promptText: currentPromptValue,
+                savedState: {
+                    engineMode: currentEngineMode,
+                    formInputs: JSON.parse(JSON.stringify(formInputs)),
+                    designSettings: JSON.parse(JSON.stringify(designSettings))
+                }
+            };
+
+            savedHistoryLogs.unshift(newLogItem);
+            SafeStorage.setItem('content_engine_history_logs_v53', JSON.stringify(savedHistoryLogs));
+            renderHistoryLogsListUI();
+            showToastNotification("Current Prompt Log Saved Successfully!");
+        }
+
+        function renderHistoryLogsListUI() {
+            const container = document.getElementById('historyLogsList');
+            if (savedHistoryLogs.length === 0) {
+                container.innerHTML = `
+                    <div class="py-6 text-center text-slate-400 dark:text-gray-500 text-xs font-medium">
+                        No saved prompt logs found. Click "Save to History" above to log a template.
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = "";
+            savedHistoryLogs.forEach((item) => {
+                const isCarousel = item.mode === 'carousel';
+                const pillColor = isCarousel ? 'bg-blue-500/10 text-blue-400' : 'bg-brand-primary/10 text-brand-primary';
+                
+                const card = document.createElement('div');
+                card.className = "bg-slate-50 dark:bg-brand-obsidian/60 p-3 rounded-xl border border-slate-200/50 dark:border-brand-dark/25 space-y-2 relative group hover:border-brand-primary/40 transition duration-150";
+                
+                card.innerHTML = `
+                    <div class="flex items-start justify-between">
+                        <div class="space-y-0.5 max-w-[80%]">
+                            <div class="flex items-center gap-1.5 flex-wrap">
+                                <span class="text-[8px] font-bold px-1.5 py-0.5 rounded ${pillColor}">
+                                    ${item.mode.toUpperCase()}
+                                </span>
+                                <span class="text-[8px] bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-gray-400 px-1.5 py-0.5 rounded">
+                                    ${item.emotion}
+                                </span>
+                                <span class="text-[8px] text-slate-400 font-mono">${item.timestamp}</span>
+                            </div>
+                            <h4 class="text-xs font-bold text-slate-700 dark:text-slate-200 truncate pr-2" title="${item.headline}">
+                                ${item.headline}
+                            </h4>
+                        </div>
+                        <button onclick="deleteHistoryLogItem(${item.id})" class="text-red-400 hover:text-red-500 text-xs" title="Delete Log">
+                            ✕
+                        </button>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="copySavedHistoryPromptText(${item.id})" class="flex-1 text-[9px] font-bold py-1 bg-brand-primary/10 hover:bg-brand-primary/20 text-brand-primary rounded transition">
+                            Copy Prompt
+                        </button>
+                        <button onclick="restoreFormStateFromHistory(${item.id})" class="flex-1 text-[9px] font-bold py-1 bg-white/5 hover:bg-white/10 text-slate-500 dark:text-slate-300 border border-slate-200 dark:border-white/10 rounded transition">
+                            Restore State
+                        </button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        async function copySavedHistoryPromptText(id) {
+            const matched = savedHistoryLogs.find(i => i.id === id);
+            if (matched) {
+                const success = await writeTextToClipboard(matched.promptText);
+                if (success) {
+                    showToastNotification("Prompt Copied to Clipboard!");
+                } else {
+                    showToastNotification("Failed to copy. Please select and copy manually.");
+                }
+            }
+        }
+
+        function restoreFormStateFromHistory(id) {
+            const matched = savedHistoryLogs.find(i => i.id === id);
+            if (matched && matched.savedState) {
+                const state = matched.savedState;
+                formInputs = JSON.parse(JSON.stringify(state.formInputs));
+                designSettings = JSON.parse(JSON.stringify(state.designSettings));
+                
+                // Switch mode
+                setEngineMode(state.engineMode);
+                
+                // Sync forms elements values
+                syncFormInputsFromData();
+                
+                // Re-sync values
+                if (currentEngineMode === 'carousel') {
+                    carouselActiveIndex = 0;
+                    syncCarouselPreview();
+                } else {
+                    syncPreviewText();
+                }
+                
+                // Apply visual design sliders values
+                document.getElementById('sizeHeadlineSlider').value = designSettings.headlineSize;
+                document.getElementById('sizeSupportSlider').value = designSettings.supportSize;
+                document.getElementById('posLayoutYSlider').value = designSettings.layoutY;
+                document.getElementById('blurIntensitySlider').value = designSettings.blurIntensity;
+                
+                adjustDesignValue('headlineSize', designSettings.headlineSize);
+                adjustDesignValue('supportSize', designSettings.supportSize);
+                adjustDesignValue('layoutY', designSettings.layoutY);
+                adjustDesignValue('blurIntensity', designSettings.blurIntensity);
+                adjustDesignValue('logoAlign', designSettings.logoAlign);
+                
+                if (designSettings.mockupPhoto) {
+                    document.getElementById('mockupPhotoSelect').value = designSettings.mockupPhoto;
+                    adjustDesignValue('mockupPhoto', designSettings.mockupPhoto);
+                }
+
+                showToastNotification("Form State Restored Successfully!");
+            }
+        }
+
+        function deleteHistoryLogItem(id) {
+            savedHistoryLogs = savedHistoryLogs.filter(i => i.id !== id);
+            SafeStorage.setItem('content_engine_history_logs_v53', JSON.stringify(savedHistoryLogs));
+            renderHistoryLogsListUI();
+            showToastNotification("History Item Removed.");
+        }
+
+        // CONFIRMATION DIALOG MODAL WRAPPERS (Adhering to strict anti-alert standards)
+        let afterConfirmationAction = null;
+
+        function clearAllHistory() {
+            afterConfirmationAction = function() {
+                savedHistoryLogs = [];
+                SafeStorage.removeItem('content_engine_history_logs_v53');
+                renderHistoryLogsListUI();
+                showToastNotification("All Prompt Log History Cleared!");
+            };
+            document.getElementById('confirmModal').classList.remove('hidden');
+        }
+
+        function closeConfirmationModal(isConfirmed) {
+            document.getElementById('confirmModal').classList.add('hidden');
+            if (isConfirmed && afterConfirmationAction) {
+                afterConfirmationAction();
+            }
+            afterConfirmationAction = null;
+        }
+
+        // STREAMING_CHUNK: Applying campaign presets to all models...
+        // CAMPAIGN PRESET DICTIONARY CONFIGURATION
+        function applyCampaignPreset(presetType) {
+            if (presetType === 'stress') {
+                formInputs.headline = "Kerja Keras Saja Tidak Cukup Tanpa Kepastian Finansial";
+                formInputs.highlight = "Kepastian Finansial";
+                formInputs.support = "Akses gaji instan kapan saja tanpa beban bunga tinggi.";
+                formInputs.cta = "Tarik Gaji Hari Ini";
+                formInputs.emotion = "stress";
+                formInputs.context = "salary access";
+                formInputs.heroMode = "SMARTPHONE";
+                designSettings.mockupPhoto = "corporate-stress";
+                
+                formInputs.carouselHeadline = "Gaji Habis Tengah Bulan Padahal Kerja Lembur?";
+                formInputs.carouselHighlight = "Gaji Habis";
+                formInputs.carouselSupport = "Mengatasi stres finansial karyawan dengan kemudahan tarik gaji lebih awal secara ramah.";
+                formInputs.carouselCta = "Tarik Gaji Hari Ini";
+            } else if (presetType === 'relief') {
+                formInputs.headline = "Senyum Tenang Karyawan Adalah Pondasi Sukses Perusahaan";
+                formInputs.highlight = "Senyum Tenang Karyawan";
+                formInputs.support = "Kurangi beban kasbon dengan platform Earned Wage Access modern.";
+                formInputs.cta = "Pelajari Kesejahteraan";
+                formInputs.emotion = "relief";
+                formInputs.context = "financial wellbeing";
+                formInputs.heroMode = "WORKSPACE";
+                designSettings.mockupPhoto = "modern-office";
+                
+                formInputs.carouselHeadline = "Pondasi Ketenangan Kerja Dimulai dari Kesejahteraan Finansial";
+                formInputs.carouselHighlight = "Ketenangan Kerja";
+                formInputs.carouselSupport = "Berikan kesejahteraan terbaik bagi karyawan Anda melalui platform EWA modern Arus.id.";
+                formInputs.carouselCta = "Pelajari Kesejahteraan";
+            } else {
+                formInputs.headline = "Kembalikan Produktivitas Terbaik Tanpa Beban Tagihan Tengah Bulan";
+                formInputs.highlight = "Produktivitas Terbaik";
+                formInputs.support = "Program Employee Benefit yang melindungi ketenangan kerja harian tim.";
+                formInputs.cta = "Demo Platform Arus";
+                formInputs.emotion = "hope";
+                formInputs.context = "employee benefit";
+                formInputs.heroMode = "HUMAN";
+                designSettings.mockupPhoto = "jakarta-commuter";
+                
+                formInputs.carouselHeadline = "Bebaskan Karyawan dari Beban Tagihan Finansial Tengah Bulan";
+                formInputs.carouselHighlight = "Bebaskan Karyawan";
+                formInputs.carouselSupport = "Melindungi ketenangan dan produktivitas tim harian Anda lewat program benefit finansial.";
+                formInputs.carouselCta = "Demo Platform Arus";
+            }
+
+            syncFormInputsFromData();
+            adjustDesignValue('mockupPhoto', designSettings.mockupPhoto);
+            document.getElementById('mockupPhotoSelect').value = designSettings.mockupPhoto;
+            
+            // If in carousel mode, update slide 1 with preset value
+            if (currentEngineMode === 'carousel') {
+                formInputs.carouselSlides[0].headline = formInputs.carouselHeadline;
+                formInputs.carouselSlides[0].support = formInputs.carouselSupport;
+                syncCarouselPreview();
+            } else {
+                syncPreviewText();
+            }
+            
+            updateLivePromptCenter();
+            showToastNotification(`Applied ${presetType.toUpperCase()} Campaign Preset Successfully!`);
+        }
+
+        // STREAMING_CHUNK: Processing rendering layout parameters into final High-Res canvases...
+        // HIGH-RESOLUTION CANVAS EXPORT MAKER
+        function renderHighResPosterExport() {
+            showToastNotification("Generating High-Resolution Canvas Export... Please wait.");
+            
+            const activeHeadline = (currentEngineMode === 'poster') ? formInputs.headline : formInputs.carouselSlides[carouselActiveIndex].headline;
+            const activeSupport = (currentEngineMode === 'poster') ? formInputs.support : formInputs.carouselSlides[carouselActiveIndex].support;
+            const activeCta = (currentEngineMode === 'poster') ? formInputs.cta : formInputs.carouselCta;
+            const activeHighlight = (currentEngineMode === 'poster') ? formInputs.highlight : formInputs.carouselHighlight;
+
+            // Dynamically construct hidden HTML5 Canvas to output absolute pixel-perfect 1200 x 1600 image.
+            const canvas = document.createElement('canvas');
+            canvas.width = 1200;
+            canvas.height = 1600;
+            const ctx = canvas.getContext('2d');
+
+            // Draw Background and Tint Color Layers
+            const img = new Image();
+            img.crossOrigin = "anonymous";
+            img.src = PHOTO_REPO[designSettings.mockupPhoto];
+            
+            img.onload = function() {
+                ctx.drawImage(img, 0, 0, 1200, 1600);
+                
+                const isDarkState = (currentEngineMode === 'poster') || (carouselActiveIndex === 1 || carouselActiveIndex === 2);
+                const grad = ctx.createLinearGradient(0, 0, 0, 1600);
+                
+                if (isDarkState) {
+                    grad.addColorStop(0, 'rgba(11, 22, 21, 0.4)');
+                    grad.addColorStop(0.5, 'rgba(11, 22, 21, 0.7)');
+                    grad.addColorStop(1, 'rgba(11, 22, 21, 0.98)');
+                } else {
+                    grad.addColorStop(0, 'rgba(255, 255, 255, 0.1)');
+                    grad.addColorStop(0.5, 'rgba(255, 255, 255, 0.5)');
+                    grad.addColorStop(1, 'rgba(255, 255, 255, 0.95)');
+                }
+                ctx.fillStyle = grad;
+                ctx.fillRect(0, 0, 1200, 1600);
+
+                // Backdrop text panel values
+                const panelY = (designSettings.layoutY / 100) * 1600;
+                const panelHeight = 440;
+                const panelX = 50;
+                const panelWidth = 1100;
+
+                ctx.save();
+                ctx.fillStyle = isDarkState ? "rgba(11, 22, 21, 0.85)" : "rgba(255, 255, 255, 0.9)";
+                ctx.strokeStyle = "rgba(79, 197, 140, 0.3)";
+                ctx.lineWidth = 3;
+                
+                ctx.beginPath();
+                ctx.roundRect(panelX, panelY, panelWidth, panelHeight, 30);
+                ctx.fill();
+                ctx.stroke();
+                ctx.restore();
+
+                // Draw Text - Logo Badge Inside Panel
+                ctx.fillStyle = isDarkState ? "#94a3b8" : "#475569";
+                ctx.font = "bold 20px 'Plus Jakarta Sans'";
+                ctx.fillText("A R U S . I D  C A M P A I G N", panelX + 40, panelY + 60);
+
+                // Draw Headline
+                ctx.font = `bold ${designSettings.headlineSize * 1.3}px Roboto`;
+                ctx.fillStyle = isDarkState ? "#ffffff" : "#0f172a";
+                
+                const wordsY = panelY + 140;
+                wrapText(ctx, activeHeadline, panelX + 40, wordsY, 1020, designSettings.headlineSize * 1.5, activeHighlight, isDarkState);
+
+                // Draw Support
+                ctx.font = `medium ${designSettings.supportSize * 1.5}px 'Plus Jakarta Sans'`;
+                ctx.fillStyle = isDarkState ? "#cbd5e1" : "#334155";
+                ctx.fillText(activeSupport, panelX + 40, panelY + 310);
+
+                // Draw CTA Area
+                ctx.fillStyle = "#4fc58c";
+                ctx.beginPath();
+                ctx.roundRect(panelX + 40, panelY + 350, 300, 60, 15);
+                ctx.fill();
+
+                ctx.fillStyle = "#0b1615";
+                ctx.font = "bold 22px 'Plus Jakarta Sans'";
+                ctx.textAlign = "center";
+                ctx.fillText(activeCta, panelX + 190, panelY + 388);
+
+                // Export PNG File Download Link
+                const link = document.createElement('a');
+                link.download = `arus-content-engine-${currentEngineMode}-${Date.now()}.png`;
+                link.href = canvas.toDataURL();
+                link.click();
+            };
+        }
+
+        function wrapText(context, text, x, y, maxWidth, lineHeight, highlightWord, isDarkState) {
+            const words = text.split(' ');
+            let line = '';
+            let currentY = y;
+
+            for (let n = 0; n < words.length; n++) {
+                let testLine = line + words[n] + ' ';
+                let metrics = context.measureText(testLine);
+                let testWidth = metrics.width;
+                
+                if (testWidth > maxWidth && n > 0) {
+                    drawLineWithHighlight(context, line, x, currentY, highlightWord, isDarkState);
+                    line = words[n] + ' ';
+                    currentY += lineHeight;
+                } else {
+                    line = testLine;
+                }
+            }
+            drawLineWithHighlight(context, line, x, currentY, highlightWord, isDarkState);
+        }
+
+        function drawLineWithHighlight(context, lineText, x, y, highlightWord, isDarkState) {
+            if (!highlightWord || !lineText.toLowerCase().includes(highlightWord.toLowerCase())) {
+                context.fillStyle = isDarkState ? "#ffffff" : "#0f172a";
+                context.fillText(lineText, x, y);
+                return;
+            }
+
+            const parts = lineText.split(new RegExp(`(${escapeRegExp(highlightWord)})`, 'gi'));
+            let currentX = x;
+
+            parts.forEach((part) => {
+                if (part.toLowerCase() === highlightWord.toLowerCase()) {
+                    context.fillStyle = "#4fc58c";
+                } else {
+                    context.fillStyle = isDarkState ? "#ffffff" : "#0f172a";
+                }
+                context.fillText(part, currentX, y);
+                currentX += context.measureText(part).width;
+            });
+        }
+
+        // SYSTEM MODAL CONTROL APIS
+        function openConfigModal() {
+            showToastNotification("Content Engine settings are fully locked for Arus.id brand specifications.");
+        }
+
+        // THEME Switcher Utility
+        function toggleTheme() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            SafeStorage.setItem('theme_engine', isDark ? 'dark' : 'light');
+            
+            const sunIcon = document.getElementById('themeIconSun');
+            const moonIcon = document.getElementById('themeIconMoon');
+            
+            if (isDark) {
+                sunIcon.classList.remove('hidden');
+                moonIcon.classList.add('hidden');
+            } else {
+                sunIcon.classList.add('hidden');
+                moonIcon.classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>
